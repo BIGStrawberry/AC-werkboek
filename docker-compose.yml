@@ -1,0 +1,15 @@
+version: '3'
+services:
+  jupyter:
+    image: jupyter/datascience-notebook
+    ports:
+      - "8888:8888"
+    volumes:
+      # Vervang in de regel hieronder "~/Git/AC/v1ac" door het pad met
+      # de notebooks. Voor dit vak zal dat de clone van je repository
+      # zijn, maar je kunt deze image ook voor andere vakken gebruiken
+      # door een algemener pad te kiezen zoals C:/Users/Squidwart/School
+      # en ervoor zorgend at je clone dan ergens in die map staat.
+      - ~/Git/AC/v1ac:/home/jovyan/work
+    working_dir: /home/jovyan/work
+    command: ["jupyter", "notebook", "--NotebookApp.password=sha1:4b9b7c63375f:d31b062d1b53f5856164d88d2f850b2397c08db4"]
