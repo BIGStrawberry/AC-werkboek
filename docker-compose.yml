@@ -7,4 +7,4 @@ services:
     volumes:
       - .:/home/jovyan/work
     working_dir: /home/jovyan/work
-    command: ["jupyter", "notebook", "--NotebookApp.password=sha1:4b9b7c63375f:d31b062d1b53f5856164d88d2f850b2397c08db4"]
+    command: ["jupyter", "notebook", "--NotebookApp.token=''"]
