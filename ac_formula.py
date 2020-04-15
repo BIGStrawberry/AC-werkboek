@@ -20,7 +20,7 @@ def parentheses(str, outer):
 class FormulaObject(object):
     def ask(self, question):
         return False
-    
+
 class Function(FormulaObject):
     def __init__(self, label, body, deriv_order=0):
         if isinstance(body, Function):
@@ -66,7 +66,7 @@ class Variable(FormulaObject):
     def __str__(self):
         return "Variable(label='" + self.label + "')"
     def variables(self):
-        if self.label is not 'C':
+        if self.label != 'C':
             return [self.label]
         else:
             return []
@@ -79,7 +79,7 @@ class Variable(FormulaObject):
     def eval(self, vars):
         if self.label in vars:
             return vars[self.label]
-        elif self.label is 'C': # C defaults to zero if not given
+        elif self.label == 'C': # C defaults to zero if not given
             return 0
         else:
             raise VariableError("Evaluating " + self.label + ", but no value provided")
@@ -91,7 +91,7 @@ class Variable(FormulaObject):
             display(Markdown("<details><pre>$" + cont + "$</pre></details>"))
         else:
             return cont
-        
+
 class Power(FormulaObject):
     def __init__(self, base, exponent):
         self.base = base
@@ -101,19 +101,19 @@ class Power(FormulaObject):
     def __str__(self):
         return "Power(base=" + str(self.base) + ",exponent=" + str(self.exponent) + ")"
     def ask(self, question):
-        if question is "negative_exponent":
+        if question == "negative_exponent":
             return self.exponent < 0
-        elif question is "one":
-            return self.exponent is 0
+        elif question == "one":
+            return self.exponent == 0
         else:
             return False
     def variables(self):
         return self.base.variables()
     def simplify(self):
         base = self.base.simplify()
-        if self.exponent is 0:
+        if self.exponent == 0:
             return Constant(1)
-        elif self.exponent is 1:
+        elif self.exponent == 1:
             return self.base
         elif isinstance(base, Power):
             return Power(base.base, base.exponent * self.exponent)
@@ -124,9 +124,9 @@ class Power(FormulaObject):
     def eval(self, vars):
         return self.base.eval(vars) ** self.exponent
     def to_latex(self, jupyter_display=False, outer=False):
-        if self.exponent is 0:
+        if self.exponent == 0:
             cont = "1"
-        elif self.exponent is 1:
+        elif self.exponent == 1:
             cont = self.base.to_latex()
         elif self.base.ask("trig_fn"):
             cont = r"\text{" + self.base.ask("trig_fn") + "}^{" + str(self.exponent) + "}" + self.base.argument.to_latex()
@@ -149,8 +149,8 @@ class Negative(FormulaObject):
     def __str__(self):
         return "Negative(inverse=" + str(self.inverse) + ")"
     def ask(self, question):
-        if question is "zero":
-            return self.inverse is 0
+        if question == "zero":
+            return self.inverse == 0
         else:
             return False
     def variables(self):
@@ -162,7 +162,7 @@ class Negative(FormulaObject):
     def simplify(self):
         if isinstance(self.inverse, Negative):
             return self.inverse.inverse
-        elif isinstance(self.inverse.simplify(), Constant) and self.inverse.simplify().value is 0:
+        elif isinstance(self.inverse.simplify(), Constant) and self.inverse.simplify().value == 0:
             return Constant(0)
         else:
             return Negative(self.inverse.simplify())
@@ -194,10 +194,10 @@ class Constant(FormulaObject):
     def __str__(self):
         return "Constant(value=" + str(self.value) + ")"
     def ask(self, question):
-        if question is "zero":
-            return self.value is 0
-        elif question is "one":
-            return self.value is 1
+        if question == "zero":
+            return self.value == 0
+        elif question == "one":
+            return self.value == 1
         else:
             return False
     def variables(self):
@@ -310,7 +310,7 @@ class Sum(FormulaObject):
             display(Markdown("<details><pre>$" + cont + "$</pre></details>"))
         else:
             return cont
-        
+
 class Sin(FormulaObject):
     def __init__(self, argument):
         self.argument = argument
@@ -319,7 +319,7 @@ class Sin(FormulaObject):
     def __str__(self):
         return "Sin(argument=" + str(self.argument) + ")"
     def ask(self, question):
-        if question is "trig_fn":
+        if question == "trig_fn":
             return "sin"
         else:
             return False
@@ -338,7 +338,7 @@ class Sin(FormulaObject):
             display(Markdown("<details><pre>$" + cont + "$</pre></details>"))
         else:
             return cont
-            
+
 class Cos(FormulaObject):
     def __init__(self, argument):
         self.argument = argument
@@ -347,7 +347,7 @@ class Cos(FormulaObject):
     def __str__(self):
         return "Cos(argument=" + str(self.argument) + ")"
     def ask(self, question):
-        if question is "trig_fn":
+        if question == "trig_fn":
             return "cos"
         else:
             return False
@@ -375,7 +375,7 @@ class Tan(FormulaObject):
     def __str__(self):
         return "Tan(argument=" + str(self.argument) + ")"
     def ask(self, question):
-        if question is "trig_fn":
+        if question == "trig_fn":
             return "tan"
         else:
             return False
@@ -394,7 +394,7 @@ class Tan(FormulaObject):
             display(Markdown("<details><pre>$" + cont + "$</pre></details>"))
         else:
             return cont
-        
+
 class Cot(FormulaObject):
     def __init__(self, argument):
         self.argument = argument
@@ -403,7 +403,7 @@ class Cot(FormulaObject):
     def __str__(self):
         return "Cot(argument=" + str(self.argument) + ")"
     def ask(self, question):
-        if question is "trig_fn":
+        if question == "trig_fn":
             return "cot"
         else:
             return False
@@ -425,7 +425,7 @@ class Cot(FormulaObject):
             display(Markdown("<details><pre>$" + cont + "$</pre></details>"))
         else:
             return cont
-            
+
 class Sec(FormulaObject):
     def __init__(self, argument):
         self.argument = argument
@@ -434,7 +434,7 @@ class Sec(FormulaObject):
     def __str__(self):
         return "Sec(argument=" + str(self.argument) + ")"
     def ask(self, question):
-        if question is "trig_fn":
+        if question == "trig_fn":
             return "sec"
         else:
             return False
@@ -456,7 +456,7 @@ class Sec(FormulaObject):
             display(Markdown("<details><pre>$" + cont + "$</pre></details>"))
         else:
             return cont
-            
+
 class Csc(FormulaObject):
     def __init__(self, argument):
         self.argument = argument
@@ -465,7 +465,7 @@ class Csc(FormulaObject):
     def __str__(self):
         return "Csc(argument=" + str(self.argument) + ")"
     def ask(self, question):
-        if question is "trig_fn":
+        if question == "trig_fn":
             return "csc"
         else:
             return False
@@ -487,7 +487,7 @@ class Csc(FormulaObject):
             display(Markdown("<details><pre>$" + cont + "$</pre></details>"))
         else:
             return cont  
-        
+
 class E(FormulaObject):
     def __init__(self, exponent):
         self.exponent = exponent
@@ -558,7 +558,7 @@ class Ln(FormulaObject):
             display(Markdown("<details><pre>$" + cont + "$</pre></details>"))
         else:
             return cont
-            
+
 class Log(FormulaObject):
     def __init__(self, base, argument):
         self.base = base

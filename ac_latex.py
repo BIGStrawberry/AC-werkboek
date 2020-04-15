@@ -16,7 +16,7 @@ def latex_formula(form):
     if latex:
         display(Math(latex))
         display(Markdown("<details><pre>$" + latex + "$</pre></details>"))
-    
+
 def latex_bmatrix(M, label=None): # Gebaseerd op https://stackoverflow.com/questions/17129290/numpy-2d-and-1d-array-to-latex-bmatrix
     if len(M.shape) > 2:
         raise ValueError('bmatrix can at most display two dimensions')
@@ -44,7 +44,7 @@ def latex_amatrix(M, labels=None):
     result +=  [r"\end{array}\right]"]
     display(Math("\n".join(result)))
     display(Markdown("<details><pre>$" + " ".join(result) + "$</pre></details>"))
-    
+
 def latex_msquare(sq):
     if sq.shape != (3,3):
         raise ValueError('Geen magisch vierkant')
@@ -66,7 +66,6 @@ def latex_ratio(x):
 
 def latex_polynomial(poly):
     terms, label, var, primes = poly # Bind parameters uit tuple
-    
 
     def power(exp):
         """Print een term (e.g. x^2). x^1 is gewoon x, x^0 is 1, maar n × 1 is gewoon n dus verberg de 1.
@@ -81,7 +80,7 @@ def latex_polynomial(poly):
     # Print f(x) met het juiste aantal primes 
     result = label + ("^{" + r"\prime"*primes + "}" if primes > 0 else "") + "(" + var + ") = "
     first = True # Na de eerste moet er "+" tussen de termen komen
-    
+
     for k, v in reversed(sorted(terms.items())): # Voor iedere term, van groot (hoog exponent) naar klein
         if v > 0 and not first: # Koppel met een plus, tenzij het de eerste term is
             result += "+"
@@ -90,13 +89,13 @@ def latex_polynomial(poly):
 
         if v != 0: # Zet first op False na de eerste keer
             first = False
-        
+
         if k is 0:
             result += str(v)
         elif abs(v) is 1: # Print x in plaats van 1x en -x in plaats van -1x
             result += str(power(k))
         elif v != 0: # Print iedere term die niet 0 of 1 is op de gebruikelijke manier, zonder min want die staat
             result += latex_ratio(abs(v)) + str(power(k))  #   erboven al
-            
+
     display(Math(result))
     display(Markdown("<details><pre>$" + result + "$</pre></details>"))

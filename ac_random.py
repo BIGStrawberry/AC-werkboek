@@ -36,6 +36,9 @@ class RNG:
                 display(Markdown("<h2 style=\"color:red;\">Je bent vergeten je studentnummer in te vullen, doe dat op de eerste regel!</h2>"))
                 raise ValueError("Je bent vergeten je studentnummer in te vullen, doe dat op de eerste regel!") from None
 
+        elif studentnr:
+                display(Markdown("<h2 style=\"color:orange;\">Seed reeds geïnitialiseerd.</h2>"))
+                return None
         else:
             return None
 
@@ -75,14 +78,14 @@ def random_matrix_vector(label=None,size=None):
     else:
         size=(np.random.randint(2,6),1)
     latex_bmatrix(np.random.randint(-20, 20, size=size), label)
-    
+
 def random_sys_of_eq():
     y = np.random.choice(9,3, False)
     Mi = np.random.choice(3,(3,3))
     while np.linalg.det(Mi) == 0:
         Mi = np.random.choice(3,(3,3))
     latex_amatrix(np.concatenate((Mi, np.reshape(np.linalg.det(Mi)*y, (3,1))), 1).astype(int), ("A", "b"))
-    
+
 def random_derivatives():
     def ho(x):
         if x == 1:
@@ -94,39 +97,39 @@ def random_derivatives():
     text = f"Gegeven $f(x) = ({a-1}- {ho(b)}x)^{ho(c)}$, bepaal $f^\\prime(x)$"
     display(Markdown("**(a)** " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
-    
+
     a,b,c,d = np.random.randint(2,7,4)
     text = f"Gegeven $g(x) = {ho(a-1)}x^{ho(b)}\\ \\text{{tan}}({ho(c)}x^{ho(d)})$, geef $g^\\prime(x)$"
     display(Markdown("**(b)** " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
-    
+
     a,b,c,d = np.random.randint(2,7,4)
     text = f"Gegeven $h(x) = \\text{{log}}_{a}({b-1}x-{c}x^{d})$, geef $h^\\prime(x)$"
     display(Markdown("**(c)** " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
-    
+
     a,b = np.random.randint(2,7,2)
     text = f"Gegeven $k(x) = \\frac{{{a}}}{{x^{b}}}$, geef $k^{{\\prime\\prime}}(x)$"
     display(Markdown("**(d)** " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
-    
+
     a,b = np.random.randint(2,7,2)
     text = f"Gegeven $\\frac{{dy}}{{dx}} = x^{a} - {ho(b-1)}y$, geef $\\frac{{d^2y}}{{dx^2}}$"
     display(Markdown("**(e)** " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
-    
+
     a,b,c,d = np.random.randint(2,7,4)
     text = f"Gegeven ${ho(a-1)}x^3y - {ho(b-1)}x^2 + {ho(c-1)}y^4 = {2*d}$, geef $\\frac{{dy}}{{dx}}$"
     display(Markdown("**(f)** " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
-    
+
 def random_integrals():
     def ho(x):
         if x == 1:
             return ""
         else:
             return x
-        
+
     def frac(x):
         if x % 2 is 0:
             return str(x/2)
@@ -137,27 +140,27 @@ def random_integrals():
     text = f"$$\\int \\sqrt[{a}]x^{b}\\ dx$$"
     display(Markdown("**(a)** Bereken " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
-    
+
     a,b,c = np.random.randint(2,7,3)
     text = f"$$\\int_{min(a,b)}^{max(a,b)+2} {c}e^x\\ dx$$"
     display(Markdown("**(b)** Bereken " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
-    
+
     a,b,c = np.random.randint(2,5,3)
     text = f"$$\int_{{{frac(min(a,b))}\\pi}}^{{{frac(max(a,b)+2)}\\pi}} -{c} \\text{{sin}}(x)\\ dx$$"
     display(Markdown("**(c)** Bereken " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
-    
+
     a,b,c,d = np.random.randint(3,9,4)
     text = f"$$\\int ({a*b}x^{b-1})({a}x^{b}+{c})^{d}\\ dx$$"
     display(Markdown("**(d)** Bereken " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
-    
+
     a,b,c = np.random.randint(2,7,3)
     text = f"$$\\int ({a}x^{b})\\text{{log}}_{c}(x)\\ dx$$"
     display(Markdown("**(e)** Bereken " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
-    
+
 def random_de():
     a,b,c,d,e,f,g,h = np.random.randint(2,9,8)
     b = int(b/2)

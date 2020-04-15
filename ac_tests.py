@@ -255,7 +255,7 @@ def test_magisch_vierkant(magisch_vierkant):
         def test_rational(self):
             np.testing.assert_equal(magisch_vierkant(self.r), self.r2)
     run_tests(TestMagischVierkant)
-    
+
 def test_limit(limit_left, limit_right, limit):
     class TestLimit(tst.TestCase):
         def discontinuous_function(self, x: float) -> float:
@@ -334,11 +334,11 @@ def test_numeric_derivative(get_derivative_at):
             np.testing.assert_almost_equal(get_derivative_at(self.succ, 2), 1, 3)
 
     run_tests(TestNumericDerivative)
-    
+
 def test_verkeer_snelheden(get_data, bereken_deltas):
     class TestVerkeerSnelheden(tst.TestCase):
         time, car1, car2 = get_data()
-        
+
         def test_min_1(self):
             car1_speed = bereken_deltas(self.time, self.car1)
             np.testing.assert_almost_equal(min(car1_speed), 1.27)
@@ -352,7 +352,7 @@ def test_verkeer_snelheden(get_data, bereken_deltas):
             car2_speed = bereken_deltas(self.time, self.car2)
             np.testing.assert_almost_equal(max(car2_speed), 2)
     run_tests(TestVerkeerSnelheden)
-    
+
 def test_polynomial_derivative(get_derivative):
     class TestNumericDerivative(tst.TestCase):
         from ac import polynomial
@@ -370,7 +370,7 @@ def test_polynomial_derivative(get_derivative):
             np.testing.assert_equal(get_derivative(self.x_root)[0][-0.5], 0.5)
 
     run_tests(TestNumericDerivative)
-    
+
 def test_matrix_derivative(deriv_matrix, matrix_product):
     fx = np.array((2,1,3))
     class TestMatrixDerivative(tst.TestCase):
@@ -378,7 +378,7 @@ def test_matrix_derivative(deriv_matrix, matrix_product):
         def test_derivative(self):
             np.testing.assert_array_equal(deriv_matrix(fx).flatten(), np.array((1,6,0)))
     run_tests(TestMatrixDerivative)
-    
+
 def test_symbolic_differentiation_alfa(Constant, Variable, Sum, Product, Power):
     class TestSymbolicDifferentiationAlfa(tst.TestCase):
 
@@ -437,7 +437,7 @@ def test_symbolic_differentiation_charlie(Constant, Variable, Sum, Product, Powe
             deriv = Function(label='f',body=Power(base=Product(left=Variable(label='x'),right=Ln(argument=Constant(value=2))),exponent=-1),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv)
     run_tests(TestSymbolicDifferentiationCharlie)
-    
+
 def test_symbolic_differentiation_charlie_eq(Constant, Variable, Sum, Product, Power, Sin, Cos, Tan, E, Exponent, Ln, Log):
     class TestSymbolicDifferentiationCharlieEq(tst.TestCase):
         def test_e_equivalent(self):
@@ -515,7 +515,7 @@ def test_verkeer_posities(get_data, bereken_posities, vind_botsing):
         car3_position = bereken_posities(time, car3)
 
         (t,ca,cap,cb,cbp) = vind_botsing(time,car1_position,car2_position,car3_position)
-        
+
         def test_time(self):
             np.testing.assert_almost_equal(self.t, 0.4, 0.1)
         def test_car_a(self):
@@ -526,7 +526,7 @@ def test_verkeer_posities(get_data, bereken_posities, vind_botsing):
             np.testing.assert_almost_equal(self.cap, 2.7, 0.01)
         def test_car_b_pos(self):
             np.testing.assert_almost_equal(self.cbp, 1.9, 0.01)
-            
+
     run_tests(TestVerkeerPosities)
 
 def test_symbolic_integration_alfa(Constant, Variable, Sum, Product, Power):
@@ -552,9 +552,9 @@ def test_symbolic_integration_alfa(Constant, Variable, Sum, Product, Power):
             form = Function('f', Power(Variable('x'), 3))
             integral = Function('f',Sum(Product(Constant(0.25),Power(Variable('x'),4)),Variable('C')),-1)
             np.testing.assert_equal(form.integrate('x'), integral)
-            
+
     run_tests(TestSymbolicIntegrationAlfa)
-            
+
 def test_symbolic_integration_alfa_eq(Constant, Variable, Sum, Product, Power):
     class TestSymbolicIntegrationAlfaEq(tst.TestCase):
 
@@ -573,7 +573,7 @@ def test_symbolic_integration_alfa_eq(Constant, Variable, Sum, Product, Power):
         def test_power_equivalent(self):
             form = Function('f', Power(Variable('x'), 3))
             np.testing.assert_equal(form.integrate('x').eval({'x': 11}), 3660.25)
-            
+
     run_tests(TestSymbolicIntegrationAlfaEq)
 
 def test_symbolic_integration_bravo(Constant, Variable, Sum, Product, Power, Sin, Cos, Tan, E, Exponent, Ln, Log):
@@ -610,10 +610,10 @@ def test_symbolic_integration_bravo(Constant, Variable, Sum, Product, Power, Sin
             integral = Function('f',Sum(Product(Product(Variable('x'),Sum(Ln(Variable('x')),
                          Negative(Constant(1)))),Power(Ln(Constant(3)),-1)),Variable('C')),-1)
             np.testing.assert_equal(form.integrate('x'), integral)
-            
+
     run_tests(TestSymbolicIntegrationBravo)
 
-            
+
 def test_symbolic_integration_bravo_eq(Constant, Variable, Sum, Product, Power, Sin, Cos, Tan, E, Exponent, Ln, Log):
     class TestSymbolicIntegrationBravoEq(tst.TestCase):
         def test_sin_equivalent(self):
@@ -637,13 +637,13 @@ def test_symbolic_integration_bravo_eq(Constant, Variable, Sum, Product, Power, 
         def test_log_equivalent(self):
             form = Function('f', Log(Constant(3),Variable('x')))
             np.testing.assert_almost_equal(form.integrate('x').eval({'x': 72}), 214.744,3)
-            
+
     run_tests(TestSymbolicIntegrationBravoEq)
-    
+
 def test_euler(afgeleide_functie, euler):
     class TestEuler(tst.TestCase):
 
         def test_result(self):
             np.testing.assert_almost_equal(euler(afgeleide_functie, 0, 1, 0.025, 0.95), 129.876, 3)
-            
+
     run_tests(TestEuler)
