@@ -40,6 +40,8 @@ def test_vector_addition(vector_addition):
             np.testing.assert_array_equal(vector_addition(self.v, np.zeros(3)), self.v)
         def test_additive_unit_2(self):
             np.testing.assert_array_equal(vector_addition(np.zeros(3), self.v), self.v)
+        def test_numpy_array(self):
+            np.testing.assert_equal(str(type(vector_addition(self.u, self.v))), "<class 'numpy.ndarray'>", "Return type must be a numpy array!")
         def test_invalid_addition(self):
             with self.assertRaises(DimensionError):
                 vector_addition(self.v, self.w)
@@ -56,6 +58,8 @@ def test_negative_of_vector(negative_of_vector, vector_addition):
             np.testing.assert_array_equal(negative_of_vector(self.z), self.z)
         def test_sum_vector_negative_is_zero(self):
             np.testing.assert_array_equal(vector_addition(self.v, negative_of_vector(self.v)), self.z)
+        def test_numpy_array(self):
+            np.testing.assert_equal(str(type(negative_of_vector(self.v))), "<class 'numpy.ndarray'>", "Return type must be a numpy array!")
     run_tests(TestNegativeOfVector)
 
 def test_scalar_product(scalar_product, vector_addition):
@@ -64,6 +68,8 @@ def test_scalar_product(scalar_product, vector_addition):
         b = 9
         u = np.array((1, 2, 3))
         v = np.array((5, 6, 7))
+        w = np.array((24, 32, 40))
+        x = np.array((65, 78, 91))
         z = np.zeros(3)
 
         def test_zero(self):
@@ -72,14 +78,22 @@ def test_scalar_product(scalar_product, vector_addition):
             np.testing.assert_array_equal(scalar_product(1, self.v), self.v)
         def test_double(self):
             np.testing.assert_array_equal(scalar_product(2, self.v), vector_addition(self.v, self.v))
-        def test_distributive_vector(self):
+        def test_distributive_vector_a(self):
             np.testing.assert_array_equal(scalar_product(self.a, vector_addition(self.u, self.v)), 
+                                          self.w)
+        def test_distributive_vector_b(self):
+            np.testing.assert_array_equal(self.w,
                                           vector_addition(scalar_product(self.a, self.u), 
                                                           scalar_product(self.a, self.v)))
-        def test_distributive_field(self):
+        def test_distributive_field_a(self):
             np.testing.assert_array_equal(scalar_product(self.a + self.b, self.v),
+                                          self.x)
+        def test_distributive_field_b(self):
+            np.testing.assert_array_equal(self.x,
                                           vector_addition(scalar_product(self.a, self.v), 
                                                           scalar_product(self.b, self.v)))
+        def test_numpy_array(self):
+            np.testing.assert_equal(str(type(scalar_product(1, self.v))), "<class 'numpy.ndarray'>", "Return type must be a numpy array!")
     run_tests(TestScalarProduct)
 
 def test_inner_product(inner_product, scalar_product):
