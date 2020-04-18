@@ -49,7 +49,7 @@ matrix_gd =  1
 matrix_ns =  0
 matrix_nd = -1
 
-def random_tensor(label=None, size=None, singular=0, interval=None):
+def random_tensor(label=None, size=None, singular=0, interval=None, ret=False):
     def generate_tensor(size, interval):
         if not interval:
             interval = (-20, 20)
@@ -64,27 +64,24 @@ def random_tensor(label=None, size=None, singular=0, interval=None):
     while (singular ==  1 and np.linalg.det(candidate) != 0) or (singular == -1 and np.linalg.det(candidate) == 0):
             candidate = generate_tensor(size, interval)
     latex_bmatrix(candidate, label)
+    return candidate if ret else None
 
-def random_scalar(label=None):
+def random_scalar(label=None, ret=False):
     if label:
         label = label
     else:
         label = ""
-    display(Math(label + " = " + str(np.random.randint(-10,10))))
+    s = np.random.randint(-10,10)
+    display(Math(label + " = " + str(s)))
+    return s if ret else None
 
-def random_matrix_vector(label=None,size=None):
-    if size:
-        size=(size,1)
-    else:
-        size=(np.random.randint(2,6),1)
-    latex_bmatrix(np.random.randint(-20, 20, size=size), label)
-
-def random_sys_of_eq():
+def random_sys_of_eq(ret=False):
     y = np.random.choice(9,3, False)
     Mi = np.random.choice(3,(3,3))
     while np.linalg.det(Mi) == 0:
         Mi = np.random.choice(3,(3,3))
     latex_amatrix(np.concatenate((Mi, np.reshape(np.linalg.det(Mi)*y, (3,1))), 1).astype(int), ("A", "b"))
+    return (Mi, y) if ret else None
 
 def random_derivatives():
     def ho(x):
