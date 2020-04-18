@@ -11,13 +11,14 @@ import re
 def show_num(x):
     return re.compile(r"\.(?!\d)").sub("\1",x)
 
-def latex_formula(form):
+def latex_formula(form, details=True):
     latex = form.simplify().to_latex(outer=True)
     if latex:
         display(Math(latex))
-        display(Markdown("<details><pre>$" + latex + "$</pre></details>"))
+        if details:
+            display(Markdown("<details><pre>$" + latex + "$</pre></details>"))
 
-def latex_bmatrix(M, label=None): # Gebaseerd op https://stackoverflow.com/questions/17129290/numpy-2d-and-1d-array-to-latex-bmatrix
+def latex_bmatrix(M, label=None, details=True): # Gebaseerd op https://stackoverflow.com/questions/17129290/numpy-2d-and-1d-array-to-latex-bmatrix
     if len(M.shape) > 2:
         raise ValueError('bmatrix can at most display two dimensions')
     lines = str(M).replace("[", "").replace("]", "").splitlines()
@@ -29,9 +30,10 @@ def latex_bmatrix(M, label=None): # Gebaseerd op https://stackoverflow.com/quest
     result += ["  " + " & ".join(map(show_num, l.split())) + r"\\" for l in lines]
     result +=  [r"\end{bmatrix}"]
     display(Math("\n".join(result)))
-    display(Markdown("<details><pre>$" + " ".join(result) + "$</pre></details>"))
+    if details:
+        display(Markdown("<details><pre>$" + " ".join(result) + "$</pre></details>"))
 
-def latex_amatrix(M, labels=None):
+def latex_amatrix(M, labels=None, details=True):
     if len(M.shape) > 2:
         raise ValueError('array can at most display two dimensions')
     lines = str(M).replace("[", "").replace("]", "").splitlines()
@@ -43,9 +45,10 @@ def latex_amatrix(M, labels=None):
     result += ["  " + " & ".join(map(show_num, l.split())) + r"\\" for l in lines]
     result +=  [r"\end{array}\right]"]
     display(Math("\n".join(result)))
-    display(Markdown("<details><pre>$" + " ".join(result) + "$</pre></details>"))
+    if details:
+        display(Markdown("<details><pre>$" + " ".join(result) + "$</pre></details>"))
 
-def latex_msquare(sq):
+def latex_msquare(sq, details=True):
     if sq.shape != (3,3):
         raise ValueError('Geen magisch vierkant')
     lines = str(sq).replace("[", "").replace("]", "").splitlines()
@@ -53,7 +56,8 @@ def latex_msquare(sq):
     result += ["  " + " & ".join(map(show_num, l.split())) + r"\\\hline" for l in lines]
     result +=  [r"\end{array}"]
     display(Math("\n".join(result)))
-    display(Markdown("<details><pre>$" + " ".join(result) + "$</pre></details>"))
+    if details:
+        display(Markdown("<details><pre>$" + " ".join(result) + "$</pre></details>"))
 
 def latex_ratio(x):
     """Helper functie om breuken naar LaTeX te converteren; getallen worden alleen naar string
@@ -64,7 +68,7 @@ def latex_ratio(x):
         n, d = x.as_integer_ratio() # Nul buiten de breuk halen
         return ("-" if n < 0 else "") + r"\frac{" + str(abs(n)) + "}{" + str(d) + "}"
 
-def latex_polynomial(poly):
+def latex_polynomial(poly, details=True):
     terms, label, var, primes = poly # Bind parameters uit tuple
 
     def power(exp):
@@ -98,4 +102,5 @@ def latex_polynomial(poly):
             result += latex_ratio(abs(v)) + str(power(k))  #   erboven al
 
     display(Math(result))
-    display(Markdown("<details><pre>$" + result + "$</pre></details>"))
+    if details:
+        display(Markdown("<details><pre>$" + result + "$</pre></details>"))
