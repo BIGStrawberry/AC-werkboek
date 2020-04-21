@@ -265,9 +265,9 @@ def test_magisch_vierkant(magisch_vierkant):
         r2 = np.array(((5, 5, 6.5), (7, 5.5, 4), (4.5, 6, 6)))
 
         def test_integer(self):
-            np.testing.assert_equal(magisch_vierkant(self.i), self.i2)
+            np.testing.assert_almost_equal(magisch_vierkant(self.i), self.i2)
         def test_rational(self):
-            np.testing.assert_equal(magisch_vierkant(self.r), self.r2)
+            np.testing.assert_almost_equal(magisch_vierkant(self.r), self.r2)
     run_tests(TestMagischVierkant)
 
 def test_limit(limit_left, limit_right, limit):
