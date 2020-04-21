@@ -19,6 +19,7 @@ from ac_latex import *
 from ac_exceptions import *
 from ac_formula import Function, Variable, Negative, Cot, Sec, Csc
 import ac_formula
+import ac_opgaven
 
 Polynomial = Tuple[Dict[int, float], str, str, int]
 
