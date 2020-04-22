@@ -215,7 +215,7 @@ def test_determinant(determinant_2, determinant_3, determinant):
         def test_determinant_zero3(self):
             np.testing.assert_equal(determinant(self.Q), 0)
         def test_determinant_scalar(self):
-            np.testing.assert_equal(determinant(np.array(((42)))), 42)
+            np.testing.assert_equal(determinant(np.array(((42,),))), 42)
         def test_determinant_too_large(self):
             with self.assertRaises(DimensionError):
                 determinant(self.R)
