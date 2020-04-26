@@ -240,13 +240,16 @@ def test_inverse_2(inverse_matrix_2):
                 inverse_matrix_2(self.O)
     run_tests(TestInverse2)
 
-def test_inverse_(inverse_matrix):
+def test_inverse_(inverse_matrix, transpose):
     class TestInverse(tst.TestCase):
         M = np.array(((4,6,3,4),(4,7,2,6),(3,3,3,1),(3,7,1,6)))
         Mi = np.array(((-11,3,8,3),(-2,-1,2,2),(11,-2,-8,-4),(6,0,-5,-3)))
         N = np.array(((1,2,3),(4,5,6),(7,8,9)))
         O = np.array(((1,2),(3,4),(5,6)))
+        Ot = np.array(((1,3,5),(2,4,6)))
 
+        def test_transpose(self):
+            np.testing.assert_equal(transpose(self.O), self.Ot)
         def test_inverse(self):
             np.testing.assert_equal(inverse_matrix(self.M), self.Mi)
         def test_inverse_no_inverse(self):
