@@ -49,7 +49,7 @@ def test_vector_addition(vector_addition):
 
 def test_negative_of_vector(negative_of_vector, vector_addition):
     class TestNegativeOfVector(tst.TestCase):
-        v = np.array((1, 2, 3))
+        v = np.array((1, -2, 3))
         z = np.zeros(3)
 
         def test_negative_of_vector(self):
