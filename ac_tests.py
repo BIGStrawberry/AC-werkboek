@@ -395,7 +395,7 @@ def test_matrix_derivative(deriv_matrix, matrix_product):
 
 def deriv_message(src, answer):
     if src.deriv() and src.deriv().body:
-        return f"Differentiating {str(src)}, I was expecting {str(src.deriv())}, but got {str(answer.body)} 😕"
+        return f"Differentiating {str(src)}, I was expecting {str(answer.body)}, but got {str(src.deriv())} 😕"
     else:
         return "I got nothing..."
 
@@ -551,7 +551,7 @@ def test_verkeer_posities(get_data, bereken_posities, vind_botsing):
 
 def integrate_message(src, answer):
     if src.deriv() and src.deriv().body:
-        return f"Integrating {str(src)}, I was expecting {str(src.integrate('x'))}, but got {str(answer.body)} 😕"
+        return f"Integrating {str(src)}, I was expecting {str(answer.body)}, but got {str(src.integrate('x'))} 😕"
     else:
         return "I got nothing..."
 
