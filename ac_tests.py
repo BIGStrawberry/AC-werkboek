@@ -393,25 +393,31 @@ def test_matrix_derivative(deriv_matrix, matrix_product):
             np.testing.assert_array_equal(deriv_matrix(fx).flatten(), np.array((1,6,0)))
     run_tests(TestMatrixDerivative)
 
+def deriv_message(src, answer):
+    if src.deriv() and src.deriv().body:
+        return f"Differentiating {str(src)}, I was expecting {str(src.deriv())}, but got {str(answer.body)} 😕"
+    else:
+        return "I got nothing..."
+
 def test_symbolic_differentiation_alfa(Constant, Variable, Sum, Product, Power):
     class TestSymbolicDifferentiationAlfa(tst.TestCase):
 
         def test_variable(self):
             form = Function('f', Variable('x'))
             deriv = Function('f', Constant(1), 1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_product(self):
             form = Function('f', Product(Variable('x'), Variable('x')))
             deriv = Function('f', Sum(Variable('x'),Variable('x')) ,1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_2x_plus_3(self):
             form = Function('f', Sum(Product(Constant(2), Power(Variable('x'),1)), Constant(3)))
             deriv = Function('f', Constant(2), 1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_recip_x(self):
             form = Function('f', Power(Variable('x'), -1))
             deriv = Function('f',Negative(Power(Variable('x'),-2)),1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
     run_tests(TestSymbolicDifferentiationAlfa)
 
 def test_symbolic_differentiation_bravo(Constant, Variable, Sum, Product, Power, Sin, Cos, Tan):
@@ -420,15 +426,15 @@ def test_symbolic_differentiation_bravo(Constant, Variable, Sum, Product, Power,
         def test_sin(self):
             form = Function('f', Sin(Variable('x')))
             deriv = Function('f', Cos(Variable('x')), 1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_cos(self):
             form = Function('f', Cos(Variable('x')))
             deriv = Function('f',Negative(Sin(Variable('x'))),1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_tan(self):
             form = Function('f', Tan(Variable('x')))
             deriv = Function('f',Power(Sec(Variable('x')),2),1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
     run_tests(TestSymbolicDifferentiationBravo)
 
 def test_symbolic_differentiation_charlie(Constant, Variable, Sum, Product, Power, Sin, Cos, Tan, E, Exponent, Ln, Log):
@@ -437,19 +443,19 @@ def test_symbolic_differentiation_charlie(Constant, Variable, Sum, Product, Powe
         def test_e(self):
             form = Function('f', E(Variable('x')))
             deriv = Function(label='f',body=E(exponent=Variable(label='x')),deriv_order=1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_exponent(self):
             form = Function('f', Exponent(Constant(2), Variable('x')))
             deriv = Function(label='f',body=Product(left=Exponent(base=Constant(value=2),exponent=Variable(label='x')),right=Ln(argument=Constant(value=2))),deriv_order=1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_ln(self):
             form = Function('f', Ln(Variable('x')))
             deriv = Function(label='f',body=Power(base=Variable(label='x'),exponent=-1),deriv_order=1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_log(self):
             form = Function('f', Log(Constant(2), Variable('x')))
             deriv = Function(label='f',body=Power(base=Product(left=Variable(label='x'),right=Ln(argument=Constant(value=2))),exponent=-1),deriv_order=1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
     run_tests(TestSymbolicDifferentiationCharlie)
 
 def test_symbolic_differentiation_charlie_eq(Constant, Variable, Sum, Product, Power, Sin, Cos, Tan, E, Exponent, Ln, Log):
@@ -474,23 +480,23 @@ def test_symbolic_differentiation_delta(Constant, Variable, Sum, Product, Power,
         def test_e_x_squared(self):
             form = Function('f', E(Power(Variable('x'),2)))
             deriv = Function(label='f',body=Product(left=Product(left=Constant(value=2),right=Variable(label='x')),right=E(exponent=Power(base=Variable(label='x'),exponent=2))),deriv_order=1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_five_log_e_x(self):
             form = Function('f', Exponent(Constant(5), E(Variable('x'))))
             deriv = Function(label='f',body=Product(left=E(exponent=Variable(label='x')),right=Product(left=Exponent(base=Constant(value=5),exponent=E(exponent=Variable(label='x'))),right=Ln(argument=Constant(value=5)))),deriv_order=1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_ln_x_squared(self):
             form = Function('f', Ln(Power(Variable('x'),2)))
             deriv = Function(label='f',body=Product(left=Constant(value=2),right=Power(base=Variable(label='x'),exponent=-1)),deriv_order=1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_five_to_the_e_x(self):
             form = Function('f', Log(Constant(5), E(Variable('x'))))
             deriv = Function(label='f',body=Power(base=Ln(argument=Constant(value=5)),exponent=-1),deriv_order=1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_sin_squared_x(self):
             form = Function('f', Power(Sin(Variable('x')), 2))
             deriv = Function(label='f',body=Product(left=Product(left=Constant(value=2),right=Cos(argument=Variable(label='x'))),right=Sin(argument=Variable(label='x'))),deriv_order=1)
-            np.testing.assert_equal(form.deriv(), deriv)
+            np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
     run_tests(TestSymbolicDifferentiationDelta)
 
 def test_symbolic_differentiation_delta_eq(Constant, Variable, Sum, Product, Power, Sin, Cos, Tan, E, Exponent, Ln, Log):
@@ -543,29 +549,35 @@ def test_verkeer_posities(get_data, bereken_posities, vind_botsing):
 
     run_tests(TestVerkeerPosities)
 
+def integrate_message(src, answer):
+    if src.deriv() and src.deriv().body:
+        return f"Integrating {str(src)}, I was expecting {str(src.integrate('x'))}, but got {str(answer.body)} 😕"
+    else:
+        return "I got nothing..."
+
 def test_symbolic_integration_alfa(Constant, Variable, Sum, Product, Power):
     class TestSymbolicIntegrationAlfa(tst.TestCase):
 
         def test_variable_x(self):
             form = Function('f', Variable('x'))
             integral = Function('f', Sum(Product(Constant(0.5),Power(Variable('x'),2)),Variable('C')), -1)
-            np.testing.assert_equal(form.integrate('x'), integral)
+            np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_variable_y(self):
             form = Function('f', Variable('y'))
             integral = Function('f', Sum(Product(Variable('x'),Variable('y')),Variable('C')), -1)
-            np.testing.assert_equal(form.integrate('x'), integral)
+            np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_product(self):
             form = Function('f', Product(Variable('x'), Variable('y')))
             integral = Function('f', Sum(Product(Variable('y'),Product(Constant(0.5),Power(Variable('x'),2))),Variable('C')), -1)
-            np.testing.assert_equal(form.integrate('x'), integral)
+            np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_sum(self):
             form = Function('f', Sum(Variable('x'), Variable('y')))
             integral = Function('f', Sum(Sum(Product(Constant(0.5),Power(Variable('x'),2)),Product(Variable('x'),Variable('y'))),Variable('C')), -1)
-            np.testing.assert_equal(form.integrate('x'), integral)
+            np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_power(self):
             form = Function('f', Power(Variable('x'), 3))
             integral = Function('f',Sum(Product(Constant(0.25),Power(Variable('x'),4)),Variable('C')),-1)
-            np.testing.assert_equal(form.integrate('x'), integral)
+            np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
 
     run_tests(TestSymbolicIntegrationAlfa)
 
@@ -596,34 +608,34 @@ def test_symbolic_integration_bravo(Constant, Variable, Sum, Product, Power, Sin
         def test_sin(self):
             form = Function('f', Sin(Variable('x')))
             integral = Function('f',Sum(Negative(Cos(Variable('x'))),Variable('C')),-1)
-            np.testing.assert_equal(form.integrate('x'), integral)
+            np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_cos(self):
             form = Function('f', Cos(Variable('x')))
             integral = Function('f',Sum(Sin(Variable('x')),Variable('C')),-1)
-            np.testing.assert_equal(form.integrate('x'), integral)
+            np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_tan(self):
             form = Function('f', Tan(Variable('x')))
             integral = Function('f',Sum(Negative(Ln(Cos(Variable('x')))),Variable('C')),-1)
-            np.testing.assert_equal(form.integrate('x'), integral)
+            np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_e(self):
             form = Function('f', E(Variable('x')))
             integral = Function('f',Sum(E(Variable('x')),Variable('C')),-1)
-            np.testing.assert_equal(form.integrate('x'), integral)
+            np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_exponent(self):
             form = Function('f', Exponent(Constant(3), Variable('x')))
             integral = Function('f',Sum(Product(Exponent(Constant(3),Variable('x')),
                                                 Power(Ln(Constant(3)),-1)),Variable('C')),-1)
-            np.testing.assert_equal(form.integrate('x'), integral)
+            np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_ln(self):
             form = Function('f', Ln(Variable('x')))
             integral = Function('f',Sum(Product(Variable('x'),Sum(Ln(Variable('x')),
                          Negative(Constant(1)))),Variable('C')),-1)
-            np.testing.assert_equal(form.integrate('x'), integral)
+            np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_log(self):
             form = Function('f', Log(Constant(3),Variable('x')))
             integral = Function('f',Sum(Product(Product(Variable('x'),Sum(Ln(Variable('x')),
                          Negative(Constant(1)))),Power(Ln(Constant(3)),-1)),Variable('C')),-1)
-            np.testing.assert_equal(form.integrate('x'), integral)
+            np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
 
     run_tests(TestSymbolicIntegrationBravo)
 

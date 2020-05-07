@@ -39,7 +39,10 @@ class Function(FormulaObject):
     def variables(self):
         return [self.body.variables()]
     def deriv(self):
-        return Function(self.label, self.body.deriv().simplify(), self.deriv_order + 1)
+        if self.body.deriv():
+            return Function(self.label, self.body.deriv().simplify(), self.deriv_order + 1)
+        else:
+            return None
     def integrate(self, wrt):
         return Function(self.label, Sum(self.body.integrate(wrt).simplify(), Variable('C')), self.deriv_order - 1)
     def eval(self, vars):
