@@ -481,7 +481,7 @@ def test_symbolic_differentiation_delta(Constant, Variable, Sum, Product, Power,
             form = Function('f', E(Power(Variable('x'),2)))
             deriv = Function(label='f',body=Product(left=Product(left=Constant(value=2),right=Variable(label='x')),right=E(exponent=Power(base=Variable(label='x'),exponent=2))),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
-        def test_five_log_e_x(self):
+        def test_five_to_the_e_x(self):
             form = Function('f', Exponent(Constant(5), E(Variable('x'))))
             deriv = Function(label='f',body=Product(left=E(exponent=Variable(label='x')),right=Product(left=Exponent(base=Constant(value=5),exponent=E(exponent=Variable(label='x'))),right=Ln(argument=Constant(value=5)))),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
@@ -489,7 +489,7 @@ def test_symbolic_differentiation_delta(Constant, Variable, Sum, Product, Power,
             form = Function('f', Ln(Power(Variable('x'),2)))
             deriv = Function(label='f',body=Product(left=Constant(value=2),right=Power(base=Variable(label='x'),exponent=-1)),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
-        def test_five_to_the_e_x(self):
+        def test_five_log_e_x(self):
             form = Function('f', Log(Constant(5), E(Variable('x'))))
             deriv = Function(label='f',body=Power(base=Ln(argument=Constant(value=5)),exponent=-1),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
@@ -505,13 +505,13 @@ def test_symbolic_differentiation_delta_eq(Constant, Variable, Sum, Product, Pow
         def test_e_x_squared_equivalent(self):
             form = Function('f', E(Power(Variable('x'),2)))
             np.testing.assert_almost_equal(form.deriv().eval({'x':5}), 720048993373.859, 3)
-        def test_five_log_e_x_equivalent(self):
+        def test_five_to_the_e_x_equivalent(self):
             form = Function('f', Exponent(Constant(5), E(Variable('x'))))
             np.testing.assert_almost_equal(form.deriv().eval({'x':-1}), 1.07, 3)
         def test_ln_x_squared_equivalent(self):
             form = Function('f', Ln(Power(Variable('x'),2)))
             np.testing.assert_equal(form.deriv().eval({'x':8}), 0.25)
-        def test_five_to_the_e_x_equivalent(self):
+        def test_five_log_e_x_equivalent(self):
             form = Function('f', Log(Constant(5), E(Variable('x'))))
             np.testing.assert_almost_equal(form.deriv().eval({'x':3}), 0.621, 3)
         def test_sin_squared_x_equivalent(self):
