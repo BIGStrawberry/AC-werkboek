@@ -296,7 +296,7 @@ class Sum(FormulaObject):
         elif right.ask("zero"):
             return left.simplify()
         elif isinstance(left, Constant) and isinstance(right, Constant):
-            return Constant(left.value * right.value)
+            return Constant(left.value + right.value)
         else:
             return Sum(self.left.simplify(), self.right.simplify())
     def complexity(self):
