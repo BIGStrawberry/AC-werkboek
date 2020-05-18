@@ -537,15 +537,15 @@ def test_verkeer_posities(get_data, bereken_posities, vind_botsing):
         (t,ca,cap,cb,cbp) = vind_botsing(time,car1_position,car2_position,car3_position)
 
         def test_time(self):
-            np.testing.assert_almost_equal(self.t, 0.4, 0.1)
+            np.testing.assert_almost_equal(self.t, 0.3, 1)
         def test_car_a(self):
             np.testing.assert_equal(self.ca, 1)
         def test_car_b(self):
             np.testing.assert_equal(self.cb, 3)
         def test_car_a_pos(self):
-            np.testing.assert_almost_equal(self.cap, 2.7, 0.01)
+            np.testing.assert_almost_equal(self.cap, 1.5, 1)
         def test_car_b_pos(self):
-            np.testing.assert_almost_equal(self.cbp, 1.9, 0.01)
+            np.testing.assert_almost_equal(self.cbp, -0.3, 1)
 
     run_tests(TestVerkeerPosities)
 
