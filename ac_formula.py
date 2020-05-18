@@ -570,7 +570,7 @@ class Log(FormulaObject):
         return self.__class__.__name__ == other.__class__.__name__ and self.base == other.base\
                                                                    and self.argument == other.argument
     def __str__(self):
-        return "Log(base=" + str(self.base) + ",exponent=" + str(self.argument) + ")"
+        return "Log(base=" + str(self.base) + ",argument=" + str(self.argument) + ")"
     def variables(self):
         return self.argument.variables()
     def simplify(self):
