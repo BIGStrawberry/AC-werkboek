@@ -550,8 +550,9 @@ def test_verkeer_posities(get_data, bereken_posities, vind_botsing):
     run_tests(TestVerkeerPosities)
 
 def integrate_message(src, answer):
-    if src.deriv() and src.deriv().body:
-        return f"Integrating {str(src)}, I was expecting {str(answer.body)}, but got {str(src.integrate('x'))} 😕"
+    integral = src.integrate('x')
+    if integral and integral.body:
+        return f"Integrating {str(src)}, I was expecting {str(answer.body)}, but got {str(integral)} 😕"
     else:
         return "I got nothing..."
 
