@@ -13,3 +13,4 @@ Brian
   - Anaconda is een package manager waarmee je Python-onderdelen makkelijk kan installeren. Je draait Jupyter vanuit een speciale omgeving.
   - In het bestand `docker-compose.yml` is een configuratie gegeven om alle verdere benodigdheden in een enkele Docker container te hebben. Dit is een soort mini virtueel systeem dat enkel Jupyter en de benodigdheden bevat. Je start Docker For Windows (of een terminal in Linux of Mac) en voert vanuit de `v1ac` map het commando `docker-compose up` uit om Jupyter te starten. De gebruikte Docker-image bevat alle benodigdheden voor de meeste data-science toepassingen.
 - In beide gevallen kun je vervolgens in je browser naar `localhost:8888` of `127.0.0.1:8888` om in Jupyter te komen.
+- Mark heeft een documentje gemaakt met alle uitgebreide stappen, dit is te vinden via Canvas.
