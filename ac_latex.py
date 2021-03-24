@@ -74,9 +74,9 @@ def latex_polynomial(poly, details=True):
     def power(exp):
         """Print een term (e.g. x^2). x^1 is gewoon x, x^0 is 1, maar n × 1 is gewoon n dus verberg de 1.
            In alle andere gevallen wordt de variabele met het juiste exponent opgeleverd."""
-        if exp is 1:
+        if exp == 1:
             return var
-        elif exp is 0:
+        elif exp == 0:
             return ""
         else:
             return (var + r"^{" + latex_ratio(exp) + "}")
@@ -94,9 +94,9 @@ def latex_polynomial(poly, details=True):
         if v != 0: # Zet first op False na de eerste keer
             first = False
 
-        if k is 0:
+        if k == 0:
             result += str(v)
-        elif abs(v) is 1: # Print x in plaats van 1x en -x in plaats van -1x
+        elif abs(v) == 1: # Print x in plaats van 1x en -x in plaats van -1x
             result += str(power(k))
         elif v != 0: # Print iedere term die niet 0 of 1 is op de gebruikelijke manier, zonder min want die staat
             result += latex_ratio(abs(v)) + str(power(k))  #   erboven al
