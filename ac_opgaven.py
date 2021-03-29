@@ -101,6 +101,10 @@ def integrals():
     RNG().set(9)
     random_integrals()
 
-def dif_eq():
+def integrals_billy():
     RNG().set(10)
+    random_integrals_extra()
+
+def dif_eq():
+    RNG().set(11)
     random_de()

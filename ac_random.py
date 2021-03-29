@@ -45,9 +45,11 @@ class RNG:
     def __getattr__(self, name):
         return getattr(self.instance, name)
 
+
 matrix_gd =  1
 matrix_ns =  0
 matrix_nd = -1
+
 
 def random_tensor(label=None, size=None, singular=0, interval=None, ret=False, details=True):
     def generate_tensor(size, interval):
@@ -66,6 +68,7 @@ def random_tensor(label=None, size=None, singular=0, interval=None, ret=False, d
     latex_bmatrix(candidate, label, details=details)
     return candidate if ret else None
 
+
 def random_scalar(label=None, ret=False):
     if label:
         label = label
@@ -75,6 +78,7 @@ def random_scalar(label=None, ret=False):
     display(Math(label + " = " + str(s)))
     return s if ret else None
 
+
 def random_sys_of_eq(ret=False, details=True):
     y = np.random.choice(9,3, False)
     Mi = np.random.choice(3,(3,3))
@@ -83,13 +87,21 @@ def random_sys_of_eq(ret=False, details=True):
     latex_amatrix(np.concatenate((Mi, np.reshape(np.linalg.det(Mi)*y, (3,1))), 1).astype(int), ("A", "b"), details=details)
     return (Mi, y) if ret else None
 
-def random_derivatives():
-    def ho(x):
-        if x == 1:
-            return ""
-        else:
-            return x
 
+def ho(x, nbsp=False):
+    if x == 1:
+        return "\\!" if nbsp else ""
+    else:
+        return str(int(x))
+
+def frac(x):
+    if x % 2 is 0:
+        return str(x/2)
+    else:
+        return r"\frac{" + str(x) + "}{2}"
+    
+    
+def random_derivatives():
     a,b,c = np.random.randint(2,7,3)
     text = f"Gegeven $f(x) = ({a-1}- {ho(b)}x)^{ho(c)}$, bepaal $f^\\prime(x)$"
     display(Markdown("**(a)** " + text))
@@ -121,41 +133,38 @@ def random_derivatives():
     display(Markdown("<details><pre>" + text + "</pre></details>"))
 
 def random_integrals():
-    def ho(x):
-        if x == 1:
-            return ""
-        else:
-            return x
-
-    def frac(x):
-        if x % 2 is 0:
-            return str(x/2)
-        else:
-            return r"\frac{" + str(x) + "}{2}"
-
     a,b = np.random.randint(2,7,2)
     text = f"$$\\int \\sqrt[{a}]x^{b}\\ dx$$"
     display(Markdown("**(a)** Bereken " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
+    
+    a,b,c,d,e = np.random.randint(3,9,5)
+    e = e if e != d else d+e
+    d, e = min(d,e), max(d,e)
+    text = f"$$\\int_{{{d}}}^{{{e}}} {a*b}x^{{{a-1}}} - {b*c}x^{{{b-1}}}\\ dx$$"
+    display(Markdown("**(b)** Bereken" + text))
+    display(Markdown("<details><pre>" + text + "</pre></details>"))
+    
+def random_integrals_extra():
 
     a,b,c = np.random.randint(2,7,3)
     text = f"$$\\int_{min(a,b)}^{max(a,b)+2} {c}e^x\\ dx$$"
-    display(Markdown("**(b)** Bereken " + text))
+    display(Markdown("**(a)** Bereken " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
 
     a,b,c = np.random.randint(2,5,3)
     text = f"$$\int_{{{frac(min(a,b))}\\pi}}^{{{frac(max(a,b)+2)}\\pi}} -{c} \\text{{sin}}(x)\\ dx$$"
-    display(Markdown("**(c)** Bereken " + text))
+    display(Markdown("**(b)** Bereken " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
 
     a,b,c,d = np.random.randint(3,9,4)
     text = f"$$\\int ({a*b}x^{b-1})({a}x^{b}+{c})^{d}\\ dx$$"
-    display(Markdown("**(d)** Bereken " + text))
+    display(Markdown("**(c)** Bereken " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
 
     a,b,c = np.random.randint(2,7,3)
     text = f"$$\\int ({a}x^{b})\\text{{log}}_{c}(x)\\ dx$$"
-    display(Markdown("**(e)** Bereken " + text))
+    display(Markdown("**(d)** Bereken " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
 
 def random_de():
