@@ -7,7 +7,7 @@ __copyright__   = "Copyright 2020, Hogeschool Utrecht"
 
 from ac_random import *
 
-def opdracht_0():
+def negatieven_en_sommen():
     RNG().set(0)
 
     random_tensor(r"\vec u")
@@ -17,7 +17,7 @@ def opdracht_0():
     random_tensor(r"\vec y", 5)
     random_tensor(r"\vec z", 5)
 
-def opdracht_3():
+def lineaire_combinaties():
     RNG().set(1)
 
     random_tensor(r"\vec u")
@@ -30,7 +30,7 @@ def opdracht_3():
     random_tensor(r"\vec y", 4)
     random_tensor(r"\vec z", 4)
 
-def opdracht_5():
+def inwendige_producten():
     RNG().set(3)
 
     random_tensor(r"\vec u", 2)
@@ -39,7 +39,7 @@ def opdracht_5():
     random_tensor(r"\vec x", 4)
     random_tensor(r"\vec y", 4)
 
-def opdracht_7():
+def matrix_vector():
     RNG().set(4)
 
     random_tensor(r"\vec u", 3)
@@ -55,7 +55,7 @@ def opdracht_7():
     random_tensor(r"\vec {q_a}", 4)
     random_tensor(r"\vec {q_b}", 4)
 
-def opdracht_9():
+def matrix_producten():
     RNG().set(4).consume_entropy(0x02, -0x14, 0x14)
 
     random_tensor(r"\vec u",3)
@@ -63,11 +63,11 @@ def opdracht_9():
     random_tensor(r"\mathbf{N}", (2,3))
     random_tensor(r"\mathbf{O}", (2,2))
 
-def opdracht_12():
+def gauss_jordan():
     RNG().set(5)
     random_sys_of_eq()
 
-def opdracht_13():
+def determinanten():
     RNG().set(6)
 
     random_tensor(r"\textbf{M}", (2,2), singular=matrix_nd)
@@ -76,14 +76,14 @@ def opdracht_13():
     random_tensor(r"\textbf{P}", (3,3), singular=matrix_nd, interval=(0,5))
     random_tensor(r"\textbf{Q}", (3,3), singular=matrix_gd, interval=(0,5))
     
-def opdracht_15():
+def inverses():
     RNG().set(6)
 
     random_tensor(r"\textbf{M}", (2,2), singular=matrix_nd)
     random_tensor(r"\textbf{N}", (2,2), singular=matrix_gd)
     random_tensor(r"\textbf{O}", (2,2), singular=matrix_nd)
     
-def opdracht_18():
+def rank():
     RNG().set(7)
 
     random_tensor(r"\textbf{M}", (2,2), singular=matrix_nd, interval=(0,5))
@@ -93,14 +93,14 @@ def opdracht_18():
     random_tensor(r"\textbf{Q}", (2,3), singular=matrix_ns, interval=(0,5))
     random_tensor(r"\textbf{R}", (2,3), singular=matrix_ns, interval=(0,5))
     
-def opdracht_30():
+def derivatives():
     RNG().set(8)
     random_derivatives()
 
-def opdracht_34():
+def integrals():
     RNG().set(9)
     random_integrals()
 
-def opdracht_35():
+def dif_eq():
     RNG().set(10)
     random_de()

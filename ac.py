@@ -31,7 +31,7 @@ def polynomial(terms: Union[list, dict], label: str = 'f', var: str = 'x', prime
     return (terms, label, var, primes)
 
 
-def plot_data29(data, slope=None, intercept=None):
+def plot_data_lr(data, slope=None, intercept=None):
     xs = [ x for x in data] 
     ys = [ data[x] for x in xs ] 
     plot.scatter(xs, ys)

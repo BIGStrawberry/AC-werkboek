@@ -7,6 +7,7 @@ __copyright__   = "Copyright 2020, Hogeschool Utrecht"
 
 from IPython.display import display, Math, Markdown
 import re
+from fractions import Fraction
 
 def show_num(x):
     return re.compile(r"\.(?!\d)").sub("\1",x)
@@ -64,6 +65,13 @@ def latex_ratio(x):
        geconverteerd."""
     if isinstance(x, int):
         return str(x)
+    elif isinstance(x, Fraction):
+        if x.numerator == x.denominator:
+            return "1"
+        elif x.numerator > 0:
+            return r"\frac{" + str(abs(x.numerator)) + "}{" + str(x.denominator) + "}"
+        else:
+            return r"-\frac{" + str(abs(x.numerator)) + "}{" + str(x.denominator) + "}"
     else:
         n, d = x.as_integer_ratio() # Nul buiten de breuk halen
         return ("-" if n < 0 else "") + r"\frac{" + str(abs(n)) + "}{" + str(d) + "}"
@@ -74,15 +82,20 @@ def latex_polynomial(poly, details=True):
     def power(exp):
         """Print een term (e.g. x^2). x^1 is gewoon x, x^0 is 1, maar n × 1 is gewoon n dus verberg de 1.
            In alle andere gevallen wordt de variabele met het juiste exponent opgeleverd."""
-        if exp is 1:
+        if exp == 1:
             return var
-        elif exp is 0:
+        elif exp == 0:
             return ""
         else:
             return (var + r"^{" + latex_ratio(exp) + "}")
 
     # Print f(x) met het juiste aantal primes 
-    result = label + ("^{" + r"\prime"*primes + "}" if primes > 0 else "") + "(" + var + ") = "
+    if primes < 1:
+        result = label.upper() + "(" + var + ") = "
+    elif primes == 0:
+        result = label + "(" + var + ") = "
+    else:
+        result = label + "^{" + r"\prime"*primes + "}" + "(" + var + ") = "
     first = True # Na de eerste moet er "+" tussen de termen komen
 
     for k, v in reversed(sorted(terms.items())): # Voor iedere term, van groot (hoog exponent) naar klein
@@ -94,9 +107,9 @@ def latex_polynomial(poly, details=True):
         if v != 0: # Zet first op False na de eerste keer
             first = False
 
-        if k is 0:
+        if k == 0:
             result += str(v)
-        elif abs(v) is 1: # Print x in plaats van 1x en -x in plaats van -1x
+        elif abs(v) == 1: # Print x in plaats van 1x en -x in plaats van -1x
             result += str(power(k))
         elif v != 0: # Print iedere term die niet 0 of 1 is op de gebruikelijke manier, zonder min want die staat
             result += latex_ratio(abs(v)) + str(power(k))  #   erboven al

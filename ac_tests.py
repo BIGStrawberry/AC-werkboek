@@ -7,6 +7,7 @@ __copyright__   = "Copyright 2020, Hogeschool Utrecht"
 
 import unittest as tst
 import numpy as np
+from fractions import Fraction
 from ac_exceptions import *
 from ac_formula import *
 
@@ -552,6 +553,43 @@ def test_verkeer_posities(get_data, bereken_posities, vind_botsing):
 
     run_tests(TestVerkeerPosities)
 
+
+def test_numeric_integral(get_integral_between):
+    class TestNumericIntegral(tst.TestCase):
+        def pi(self, x: float) -> float:
+            return 4 / (1+x**2)
+        def gauss(self, x: float) -> float:
+            return math.e **(-x**2)
+        def bizarre(self, x: float) -> float:
+            return (math.sin(x)**2 / -math.cos(x**4)) + math.e**x
+
+        def test_gauss(self):
+            np.testing.assert_almost_equal(get_integral_between(self.gauss, -100, 100, 0.1), math.sqrt(math.pi), 0.01)
+        def test_pi(self):
+            np.testing.assert_almost_equal(get_integral_between(self.pi, 0, 1), math.pi, 0.01)
+        def test_bizarre(self):
+            np.testing.assert_almost_equal(get_integral_between(self.bizarre, -0.74, 1.07), 1.86, 0.01)
+
+    run_tests(TestNumericIntegral)    
+
+
+def test_polynomial_integral(get_integral):
+    class TestNumericIntegral(tst.TestCase):
+        from ac import polynomial
+        x_squared = polynomial({1: 0, 2: 1})
+        x_recip_sq = polynomial({-2: 1})
+        x_root = polynomial({Fraction(1,2): 1})
+
+        def test_squared(self):
+            np.testing.assert_almost_equal(get_integral(self.x_squared)[0][3], Fraction(1,3), 0.001)
+        def test_recip_sq(self):
+            np.testing.assert_equal(get_integral(self.x_recip_sq)[0][-1], -1)
+        def test_root(self):
+            np.testing.assert_equal(get_integral(self.x_root)[0][Fraction(3,2)], Fraction(2,3))
+
+    run_tests(TestNumericIntegral)    
+
+    
 def integrate_message(src, answer):
     integral = src.integrate('x')
     if integral and integral.body:
