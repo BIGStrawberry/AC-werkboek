@@ -7,6 +7,7 @@ __copyright__   = "Copyright 2020, Hogeschool Utrecht"
 
 from IPython.display import display, Math, Markdown
 import re
+from fractions import Fraction
 
 def show_num(x):
     return re.compile(r"\.(?!\d)").sub("\1",x)
@@ -64,6 +65,13 @@ def latex_ratio(x):
        geconverteerd."""
     if isinstance(x, int):
         return str(x)
+    elif isinstance(x, Fraction):
+        if x.numerator == x.denominator:
+            return "1"
+        elif x.numerator > 0:
+            return r"\frac{" + str(abs(x.numerator)) + "}{" + str(x.denominator) + "}"
+        else:
+            return r"-\frac{" + str(abs(x.numerator)) + "}{" + str(x.denominator) + "}"
     else:
         n, d = x.as_integer_ratio() # Nul buiten de breuk halen
         return ("-" if n < 0 else "") + r"\frac{" + str(abs(n)) + "}{" + str(d) + "}"
@@ -82,7 +90,12 @@ def latex_polynomial(poly, details=True):
             return (var + r"^{" + latex_ratio(exp) + "}")
 
     # Print f(x) met het juiste aantal primes 
-    result = label + ("^{" + r"\prime"*primes + "}" if primes > 0 else "") + "(" + var + ") = "
+    if primes < 1:
+        result = label.upper() + "(" + var + ") = "
+    elif primes == 0:
+        result = label + "(" + var + ") = "
+    else:
+        result = label + "^{" + r"\prime"*primes + "}" + "(" + var + ") = "
     first = True # Na de eerste moet er "+" tussen de termen komen
 
     for k, v in reversed(sorted(terms.items())): # Voor iedere term, van groot (hoog exponent) naar klein
