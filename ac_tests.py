@@ -5,32 +5,45 @@
 __author__      = "Brian van der Bijl"
 __copyright__   = "Copyright 2020, Hogeschool Utrecht"
 
+import math
 import unittest as tst
-import numpy as np
 from fractions import Fraction
-from ac_exceptions import *
-from ac_formula import *
+import numpy as np
+
+from IPython.display import display, Markdown
+
+from ac_exceptions import NonInvertibleError, DimensionError
+from ac import polynomial
+import ac_formula
+
+# pylint: disable=W0613,R0201,C0103,R0913
+# W0613 Unused argument: false positives due to defining classes in side functions
+# R0201 Method could be a function: because of how the unittest library works
+# C0103 Argument name not conforming to snake case: to match variable names used in maths
+# R0913 To many arguments: all defined functions and objects need to be passed to tests
 
 suite = tst.TestSuite()
 
+
 def run_tests(test):
     try:
-        shell = get_ipython()
+        _ = get_ipython()
         ipython = True
     except NameError:
         ipython = False
 
-    tl = tst.TestLoader().loadTestsFromTestCase(test)
+    test_loader = tst.TestLoader().loadTestsFromTestCase(test)
 
     if ipython:
-        s = tst.TestSuite()
-        s.addTest(tl)
-        tst.TextTestRunner(verbosity=2).run(s)
+        testsuite = tst.TestSuite()
+        testsuite.addTest(test_loader)
+        tst.TextTestRunner(verbosity=2).run(testsuite)
     else:
-        suite.addTest(tl)
+        suite.addTest(test_loader)
+
 
 def test_vector_addition(vector_addition):
-    class TestVectorAddition(tst.TestCase):
+    class TestVectorAddition(tst.TestCase): # pylint: disable=C0103
         u = np.array((1, 2, 3))
         v = np.array((4, 5, 6))
         w = np.array((7,8))
@@ -57,7 +70,7 @@ def test_vector_addition(vector_addition):
     run_tests(TestVectorAddition)
 
 def test_negative_of_vector(negative_of_vector, vector_addition):
-    class TestNegativeOfVector(tst.TestCase):
+    class TestNegativeOfVector(tst.TestCase): # pylint: disable=C0103
         v = np.array((1, -2, 3))
         z = np.zeros(3)
 
@@ -79,7 +92,7 @@ def test_negative_of_vector(negative_of_vector, vector_addition):
     run_tests(TestNegativeOfVector)
 
 def test_scalar_product(scalar_product, vector_addition):
-    class TestScalarProduct(tst.TestCase):
+    class TestScalarProduct(tst.TestCase): # pylint: disable=C0103
         a = 4
         b = 9
         u = np.array((1, 2, 3))
@@ -95,18 +108,18 @@ def test_scalar_product(scalar_product, vector_addition):
         def test_double(self):
             np.testing.assert_array_equal(scalar_product(2, self.v), vector_addition(self.v, self.v))
         def test_distributive_vector_a(self):
-            np.testing.assert_array_equal(scalar_product(self.a, vector_addition(self.u, self.v)), 
+            np.testing.assert_array_equal(scalar_product(self.a, vector_addition(self.u, self.v)),
                                           self.w)
         def test_distributive_vector_b(self):
             np.testing.assert_array_equal(self.w,
-                                          vector_addition(scalar_product(self.a, self.u), 
+                                          vector_addition(scalar_product(self.a, self.u),
                                                           scalar_product(self.a, self.v)))
         def test_distributive_field_a(self):
             np.testing.assert_array_equal(scalar_product(self.a + self.b, self.v),
                                           self.x)
         def test_distributive_field_b(self):
             np.testing.assert_array_equal(self.x,
-                                          vector_addition(scalar_product(self.a, self.v), 
+                                          vector_addition(scalar_product(self.a, self.v),
                                                           scalar_product(self.b, self.v)))
         def test_numpy_array(self):
             np.testing.assert_equal(str(type(scalar_product(1, self.v))), "<class 'numpy.ndarray'>", "Return type must be a numpy array!")
@@ -122,7 +135,7 @@ def test_scalar_product(scalar_product, vector_addition):
     run_tests(TestScalarProduct)
 
 def test_inner_product(inner_product, scalar_product):
-    class TestInnerProduct(tst.TestCase):
+    class TestInnerProduct(tst.TestCase): # pylint: disable=C0103
         a = 4
         u = np.array((1, -2, 3))
         v = np.array((-5, 6, -7))
@@ -141,10 +154,10 @@ def test_inner_product(inner_product, scalar_product):
         def test_commutative(self):
             np.testing.assert_equal(inner_product(self.u, self.v), inner_product(self.v, self.u))
         def test_linear1(self):
-            np.testing.assert_equal(inner_product(scalar_product(self.a, self.v), self.u), 
+            np.testing.assert_equal(inner_product(scalar_product(self.a, self.v), self.u),
                                     self.a * inner_product(self.v, self.u))
         def test_linear2(self):
-            np.testing.assert_equal(inner_product(self.v, scalar_product(self.a, self.u)), 
+            np.testing.assert_equal(inner_product(self.v, scalar_product(self.a, self.u)),
                                     self.a * inner_product(self.v, self.u))
     display(Markdown(r"""### Tests
 | **Test** | **Betekenis** |
@@ -160,10 +173,10 @@ def test_inner_product(inner_product, scalar_product):
     run_tests(TestInnerProduct)
 
 def test_vector_matrix_product(matrix_product):
-    class TestVectorMatrixProduct(tst.TestCase):
+    class TestVectorMatrixProduct(tst.TestCase): # pylint: disable=C0103
         a = 4
         v = np.array((1, 2, 3))
-        M = np.array(((6, 5, 4), (9, 8, 7))) 
+        M = np.array(((6, 5, 4), (9, 8, 7)))
         z = np.zeros(3)
 
         def test_valid_product(self):
@@ -186,11 +199,11 @@ def test_vector_matrix_product(matrix_product):
     run_tests(TestVectorMatrixProduct)
 
 def test_matrix_product(matrix_product):
-    class TestMatrixProduct(tst.TestCase):
+    class TestMatrixProduct(tst.TestCase): # pylint: disable=C0103
         a = 4
         v = np.array((1, 2, 3))
-        M = np.array(((6, 5, 4), (9, 8, 7))) 
-        N = np.array(((4, 0), (4, 5), (8, 3))) 
+        M = np.array(((6, 5, 4), (9, 8, 7)))
+        N = np.array(((4, 0), (4, 5), (8, 3)))
         z = np.zeros(3)
 
         def test_vector_product(self):
@@ -222,13 +235,13 @@ def test_neural_network(read_network, run_network, matrix_product):
         def test_read_singlelayer(self):
             np.testing.assert_array_almost_equal(read_network(r"example.json"), self.layer1)
         def test_read_duallayer(self):
-            np.testing.assert_array_almost_equal(read_network(r"example-2layer.json"), 
+            np.testing.assert_array_almost_equal(read_network(r"example-2layer.json"),
                                                  matrix_product(self.layer2, self.layer1))
         def test_run_singlelayer(self):
-            np.testing.assert_array_almost_equal(run_network(r"example.json", np.ones(5)).reshape(4), 
+            np.testing.assert_array_almost_equal(run_network(r"example.json", np.ones(5)).reshape(4),
                                                  np.array((0.5, -0.3, 0.2, 0.5)))
         def test_run_duallayer(self):
-            np.testing.assert_array_almost_equal(run_network(r"example-2layer.json", np.ones(5)).reshape(2), 
+            np.testing.assert_array_almost_equal(run_network(r"example-2layer.json", np.ones(5)).reshape(2),
                                                  np.array((0.62, 0.36)))
     display(Markdown(r"""### Tests
 | **Test** | **Betekenis** |
@@ -241,7 +254,7 @@ def test_neural_network(read_network, run_network, matrix_product):
     run_tests(TestNeuralNetwork)
 
 def test_determinant(determinant_2, determinant_3, determinant):
-    class TestDeterminant(tst.TestCase):
+    class TestDeterminant(tst.TestCase): # pylint: disable=C0103
         M = np.array(((1,2),(3,4)))
         N = np.array(((1,-2,0),(0,1,-1),(1,-5,1)))
         O = np.array(((1,2),(3,4),(5,6)))
@@ -301,7 +314,7 @@ def test_determinant(determinant_2, determinant_3, determinant):
     run_tests(TestDeterminant)
 
 def test_inverse_2(inverse_matrix_2):
-    class TestInverse2(tst.TestCase):
+    class TestInverse2(tst.TestCase): # pylint: disable=C0103
         M = np.array(((1,2),(3,4)))
         N = np.array(((1,-1),(2,-2)))
         O = np.array(((1,2),(3,4),(5,6)))
@@ -324,7 +337,7 @@ def test_inverse_2(inverse_matrix_2):
     run_tests(TestInverse2)
 
 def test_inverse_(inverse_matrix, transpose):
-    class TestInverse(tst.TestCase):
+    class TestInverse(tst.TestCase): # pylint: disable=C0103
         M = np.array(((4,6,3,4),(4,7,2,6),(3,3,3,1),(3,7,1,6)))
         Mi = np.array(((-11,3,8,3),(-2,-1,2,2),(11,-2,-8,-4),(6,0,-5,-3)))
         N = np.array(((1,2,3),(4,5,6),(7,8,9)))
@@ -351,7 +364,7 @@ def test_inverse_(inverse_matrix, transpose):
     run_tests(TestInverse)
 
 def test_magisch_vierkant(magisch_vierkant):
-    class TestMagischVierkant(tst.TestCase):
+    class TestMagischVierkant(tst.TestCase): # pylint: disable=C0103
         i = np.array(((0, 3, 4), (0, 0, 0), (0, 7, 0)))
         i2 = np.array(((8, 3, 4), (1, 5, 9), (6, 7, 2)))
         r = np.array(((5, 0, 0), (0, 0, 4), (0, 0, 6)))
@@ -407,7 +420,7 @@ def test_limit(limit_left, limit_right, limit):
         def piecewise_function(self, x: float) -> float:
             if x < -2:
                 return -1.5*x -2
-            elif x >= -2 and x <= 1:
+            elif -2 <= x <= 1:
                 return -1/3 * (x-1) + 2
             else:
                 return x-2
@@ -491,7 +504,6 @@ def test_verkeer_snelheden(get_data, bereken_deltas):
 
 def test_polynomial_derivative(get_derivative):
     class TestNumericDerivative(tst.TestCase):
-        from ac import polynomial
         x_squared = polynomial({1: 0, 2: 1})
         x_recip = polynomial({-1: 1})
         x_root = polynomial({1/2: 1})
@@ -514,11 +526,11 @@ def test_polynomial_derivative(get_derivative):
     run_tests(TestNumericDerivative)
 
 def test_matrix_derivative(deriv_matrix, matrix_product):
-    fx = np.array((2,1,3))
+    f_x = np.array((2,1,3))
     class TestMatrixDerivative(tst.TestCase):
 
         def test_derivative(self):
-            np.testing.assert_array_equal(deriv_matrix(fx).flatten(), np.array((1,6,0)))
+            np.testing.assert_array_equal(deriv_matrix(f_x).flatten(), np.array((1,6,0)))
     run_tests(TestMatrixDerivative)
 
 def deriv_message(src, answer):
@@ -531,20 +543,20 @@ def test_symbolic_differentiation_alfa(Constant, Variable, Sum, Product, Power):
     class TestSymbolicDifferentiationAlfa(tst.TestCase):
 
         def test_variable(self):
-            form = Function('f', Variable('x'))
-            deriv = Function('f', Constant(1), 1)
+            form = ac_formula.Function('f', Variable('x'))
+            deriv = ac_formula.Function('f', Constant(1), 1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_product(self):
-            form = Function('f', Product(Variable('x'), Variable('x')))
-            deriv = Function('f', Sum(Variable('x'),Variable('x')) ,1)
+            form = ac_formula.Function('f', Product(Variable('x'), Variable('x')))
+            deriv = ac_formula.Function('f', Sum(Variable('x'),Variable('x')) ,1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_2x_plus_3(self):
-            form = Function('f', Sum(Product(Constant(2), Power(Variable('x'),1)), Constant(3)))
-            deriv = Function('f', Constant(2), 1)
+            form = ac_formula.Function('f', Sum(Product(Constant(2), Power(Variable('x'),1)), Constant(3)))
+            deriv = ac_formula.Function('f', Constant(2), 1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_recip_x(self):
-            form = Function('f', Power(Variable('x'), -1))
-            deriv = Function('f',Negative(Power(Variable('x'),-2)),1)
+            form = ac_formula.Function('f', Power(Variable('x'), -1))
+            deriv = ac_formula.Function('f',ac_formula.Negative(Power(Variable('x'),-2)),1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
     display(Markdown(r"""### Tests
 | **Test** | **Betekenis** |
@@ -559,16 +571,16 @@ def test_symbolic_differentiation_bravo(Constant, Variable, Sum, Product, Power,
     class TestSymbolicDifferentiationBravo(tst.TestCase):
 
         def test_sin(self):
-            form = Function('f', Sin(Variable('x')))
-            deriv = Function('f', Cos(Variable('x')), 1)
+            form = ac_formula.Function('f', Sin(Variable('x')))
+            deriv = ac_formula.Function('f', Cos(Variable('x')), 1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_cos(self):
-            form = Function('f', Cos(Variable('x')))
-            deriv = Function('f',Negative(Sin(Variable('x'))),1)
+            form = ac_formula.Function('f', Cos(Variable('x')))
+            deriv = ac_formula.Function('f',ac_formula.Negative(Sin(Variable('x'))),1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_tan(self):
-            form = Function('f', Tan(Variable('x')))
-            deriv = Function('f',Power(Sec(Variable('x')),2),1)
+            form = ac_formula.Function('f', Tan(Variable('x')))
+            deriv = ac_formula.Function('f',Power(ac_formula.Sec(Variable('x')),2),1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
     display(Markdown(r"""### Tests
 | **Test** | **Betekenis** |
@@ -582,20 +594,20 @@ def test_symbolic_differentiation_charlie(Constant, Variable, Sum, Product, Powe
     class TestSymbolicDifferentiationCharlie(tst.TestCase):
 
         def test_e(self):
-            form = Function('f', E(Variable('x')))
-            deriv = Function(label='f',body=E(exponent=Variable(label='x')),deriv_order=1)
+            form = ac_formula.Function('f', E(Variable('x')))
+            deriv = ac_formula.Function(label='f',body=E(exponent=Variable(label='x')),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_exponent(self):
-            form = Function('f', Exponent(Constant(2), Variable('x')))
-            deriv = Function(label='f',body=Product(left=Exponent(base=Constant(value=2),exponent=Variable(label='x')),right=Ln(argument=Constant(value=2))),deriv_order=1)
+            form = ac_formula.Function('f', Exponent(Constant(2), Variable('x')))
+            deriv = ac_formula.Function(label='f',body=Product(left=Exponent(base=Constant(value=2),exponent=Variable(label='x')),right=Ln(argument=Constant(value=2))),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_ln(self):
-            form = Function('f', Ln(Variable('x')))
-            deriv = Function(label='f',body=Power(base=Variable(label='x'),exponent=-1),deriv_order=1)
+            form = ac_formula.Function('f', Ln(Variable('x')))
+            deriv = ac_formula.Function(label='f',body=Power(base=Variable(label='x'),exponent=-1),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_log(self):
-            form = Function('f', Log(Constant(2), Variable('x')))
-            deriv = Function(label='f',body=Power(base=Product(left=Variable(label='x'),right=Ln(argument=Constant(value=2))),exponent=-1),deriv_order=1)
+            form = ac_formula.Function('f', Log(Constant(2), Variable('x')))
+            deriv = ac_formula.Function(label='f',body=Power(base=Product(left=Variable(label='x'),right=Ln(argument=Constant(value=2))),exponent=-1),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
     display(Markdown(r"""### Tests
 
@@ -610,16 +622,16 @@ def test_symbolic_differentiation_charlie(Constant, Variable, Sum, Product, Powe
 def test_symbolic_differentiation_charlie_eq(Constant, Variable, Sum, Product, Power, Sin, Cos, Tan, E, Exponent, Ln, Log):
     class TestSymbolicDifferentiationCharlieEq(tst.TestCase):
         def test_e_equivalent(self):
-            form = Function('f', E(Variable('x')))
+            form = ac_formula.Function('f', E(Variable('x')))
             np.testing.assert_almost_equal(form.deriv().eval({'x':-1}), 0.368, 3)
         def test_exponent_equivalent(self):
-            form = Function('f', Exponent(Constant(2), Variable('x')))
+            form = ac_formula.Function('f', Exponent(Constant(2), Variable('x')))
             np.testing.assert_almost_equal(form.deriv().eval({'x':7}), 88.723, 3)
         def test_ln_equivalent(self):
-            form = Function('f', Ln(Variable('x')))
+            form = ac_formula.Function('f', Ln(Variable('x')))
             np.testing.assert_almost_equal(form.deriv().eval({'x':3}), 0.333, 3)
         def test_log_equivalent(self):
-            form = Function('f', Log(Constant(2), Variable('x')))
+            form = ac_formula.Function('f', Log(Constant(2), Variable('x')))
             np.testing.assert_almost_equal(form.deriv().eval({'x':5}), 0.289, 3)
     run_tests(TestSymbolicDifferentiationCharlieEq)
 
@@ -627,24 +639,24 @@ def test_symbolic_differentiation_delta(Constant, Variable, Sum, Product, Power,
     class TestSymbolicDifferentiationDelta(tst.TestCase):
 
         def test_e_x_squared(self):
-            form = Function('f', E(Power(Variable('x'),2)))
-            deriv = Function(label='f',body=Product(left=Product(left=Constant(value=2),right=Variable(label='x')),right=E(exponent=Power(base=Variable(label='x'),exponent=2))),deriv_order=1)
+            form = ac_formula.Function('f', E(Power(Variable('x'),2)))
+            deriv = ac_formula.Function(label='f',body=Product(left=Product(left=Constant(value=2),right=Variable(label='x')),right=E(exponent=Power(base=Variable(label='x'),exponent=2))),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_five_to_the_e_x(self):
-            form = Function('f', Exponent(Constant(5), E(Variable('x'))))
-            deriv = Function(label='f',body=Product(left=E(exponent=Variable(label='x')),right=Product(left=Exponent(base=Constant(value=5),exponent=E(exponent=Variable(label='x'))),right=Ln(argument=Constant(value=5)))),deriv_order=1)
+            form = ac_formula.Function('f', Exponent(Constant(5), E(Variable('x'))))
+            deriv = ac_formula.Function(label='f',body=Product(left=E(exponent=Variable(label='x')),right=Product(left=Exponent(base=Constant(value=5),exponent=E(exponent=Variable(label='x'))),right=Ln(argument=Constant(value=5)))),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_ln_x_squared(self):
-            form = Function('f', Ln(Power(Variable('x'),2)))
-            deriv = Function(label='f',body=Product(left=Constant(value=2),right=Power(base=Variable(label='x'),exponent=-1)),deriv_order=1)
+            form = ac_formula.Function('f', Ln(Power(Variable('x'),2)))
+            deriv = ac_formula.Function(label='f',body=Product(left=Constant(value=2),right=Power(base=Variable(label='x'),exponent=-1)),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_five_log_e_x(self):
-            form = Function('f', Log(Constant(5), E(Variable('x'))))
-            deriv = Function(label='f',body=Power(base=Ln(argument=Constant(value=5)),exponent=-1),deriv_order=1)
+            form = ac_formula.Function('f', Log(Constant(5), E(Variable('x'))))
+            deriv = ac_formula.Function(label='f',body=Power(base=Ln(argument=Constant(value=5)),exponent=-1),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
         def test_sin_squared_x(self):
-            form = Function('f', Power(Sin(Variable('x')), 2))
-            deriv = Function(label='f',body=Product(left=Product(left=Constant(value=2),right=Cos(argument=Variable(label='x'))),right=Sin(argument=Variable(label='x'))),deriv_order=1)
+            form = ac_formula.Function('f', Power(Sin(Variable('x')), 2))
+            deriv = ac_formula.Function(label='f',body=Product(left=Product(left=Constant(value=2),right=Cos(argument=Variable(label='x'))),right=Sin(argument=Variable(label='x'))),deriv_order=1)
             np.testing.assert_equal(form.deriv(), deriv, deriv_message(form, deriv))
     display(Markdown(r"""### Tests
 #### `test_sin_squared_x`
@@ -667,19 +679,19 @@ def test_symbolic_differentiation_delta_eq(Constant, Variable, Sum, Product, Pow
     class TestSymbolicDifferentiationDeltaEq(tst.TestCase):
 
         def test_e_x_squared_equivalent(self):
-            form = Function('f', E(Power(Variable('x'),2)))
+            form = ac_formula.Function('f', E(Power(Variable('x'),2)))
             np.testing.assert_almost_equal(form.deriv().eval({'x':5}), 720048993373.859, 3)
         def test_five_to_the_e_x_equivalent(self):
-            form = Function('f', Exponent(Constant(5), E(Variable('x'))))
+            form = ac_formula.Function('f', Exponent(Constant(5), E(Variable('x'))))
             np.testing.assert_almost_equal(form.deriv().eval({'x':-1}), 1.07, 3)
         def test_ln_x_squared_equivalent(self):
-            form = Function('f', Ln(Power(Variable('x'),2)))
+            form = ac_formula.Function('f', Ln(Power(Variable('x'),2)))
             np.testing.assert_equal(form.deriv().eval({'x':8}), 0.25)
         def test_five_log_e_x_equivalent(self):
-            form = Function('f', Log(Constant(5), E(Variable('x'))))
+            form = ac_formula.Function('f', Log(Constant(5), E(Variable('x'))))
             np.testing.assert_almost_equal(form.deriv().eval({'x':3}), 0.621, 3)
         def test_sin_squared_x_equivalent(self):
-            form = Function('f', Power(Sin(Variable('x')), 2))
+            form = ac_formula.Function('f', Power(Sin(Variable('x')), 2))
             np.testing.assert_almost_equal(form.deriv().eval({'x': 1.5 * math.pi}), 0, 3)
     run_tests(TestSymbolicDifferentiationDeltaEq)
 
@@ -700,7 +712,7 @@ def test_verkeer_posities(get_data, bereken_posities, vind_botsing):
 | `test_car_a_pos` | Controlleert de positie van de eerste auto |
 | `test_car_b` | Controlleert de identiteit van de tweede auto |
 | `test_car_b_pos` | Controlleert de positie van de tweede auto |"""))
-    
+
     class TestVerkeerPosities(tst.TestCase):
         time, car1, car2, car3 = get_data()
         car1_position = bereken_posities(time, car1)
@@ -743,12 +755,11 @@ def test_numeric_integral(get_integral_between):
 | `test_pi` | Zoekt de integraal van `pi` op $[0,1]$, dit zou $\pi$ moeten benaderen  |
 | `test_gauss` | Zoekt de integraal van `gauss` op $[-100,100]$, dit zou $\sqrt\pi$ moeten benaderen |
 | `test_bizarre` | Zoekt de integraal van `bizarre` voor de middelste heuvel, dit zou $1.86$ moeten benaderen |"""))
-    run_tests(TestNumericIntegral)    
+    run_tests(TestNumericIntegral)
 
 
 def test_polynomial_integral(get_integral):
     class TestNumericIntegral(tst.TestCase):
-        from ac import polynomial
         x_squared = polynomial({1: 0, 2: 1})
         x_recip_sq = polynomial({-2: 1})
         x_root = polynomial({Fraction(1,2): 1})
@@ -765,9 +776,9 @@ def test_polynomial_integral(get_integral):
 | `test_squared` | Zoekt de integraal van `x_squared` ($x^2$) |
 | `test_recip_sq` | Zoekt de integraal van `test_recip_sq` ($\frac{1}{x^2}$) |
 | `test_root` | Zoekt de integraal van `x_root` ($\sqrt x$) |"""))
-    run_tests(TestNumericIntegral)    
+    run_tests(TestNumericIntegral)
 
-    
+
 def integrate_message(src, answer):
     integral = src.integrate('x')
     if integral and integral.body:
@@ -779,24 +790,24 @@ def test_symbolic_integration_alfa(Constant, Variable, Sum, Product, Power):
     class TestSymbolicIntegrationAlfa(tst.TestCase):
 
         def test_variable_x(self):
-            form = Function('f', Variable('x'))
-            integral = Function('f', Sum(Product(Constant(0.5),Power(Variable('x'),2)),Variable('C')), -1)
+            form = ac_formula.Function('f', Variable('x'))
+            integral = ac_formula.Function('f', Sum(Product(Constant(0.5),Power(Variable('x'),2)),Variable('C')), -1)
             np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_variable_y(self):
-            form = Function('f', Variable('y'))
-            integral = Function('f', Sum(Product(Variable('x'),Variable('y')),Variable('C')), -1)
+            form = ac_formula.Function('f', Variable('y'))
+            integral = ac_formula.Function('f', Sum(Product(Variable('x'),Variable('y')),Variable('C')), -1)
             np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_product(self):
-            form = Function('f', Product(Variable('x'), Variable('y')))
-            integral = Function('f', Sum(Product(Variable('y'),Product(Constant(0.5),Power(Variable('x'),2))),Variable('C')), -1)
+            form = ac_formula.Function('f', Product(Variable('x'), Variable('y')))
+            integral = ac_formula.Function('f', Sum(Product(Variable('y'),Product(Constant(0.5),Power(Variable('x'),2))),Variable('C')), -1)
             np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_sum(self):
-            form = Function('f', Sum(Variable('x'), Variable('y')))
-            integral = Function('f', Sum(Sum(Product(Constant(0.5),Power(Variable('x'),2)),Product(Variable('x'),Variable('y'))),Variable('C')), -1)
+            form = ac_formula.Function('f', Sum(Variable('x'), Variable('y')))
+            integral = ac_formula.Function('f', Sum(Sum(Product(Constant(0.5),Power(Variable('x'),2)),Product(Variable('x'),Variable('y'))),Variable('C')), -1)
             np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_power(self):
-            form = Function('f', Power(Variable('x'), 3))
-            integral = Function('f',Sum(Product(Constant(0.25),Power(Variable('x'),4)),Variable('C')),-1)
+            form = ac_formula.Function('f', Power(Variable('x'), 3))
+            integral = ac_formula.Function('f',Sum(Product(Constant(0.25),Power(Variable('x'),4)),Variable('C')),-1)
             np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
 
     run_tests(TestSymbolicIntegrationAlfa)
@@ -805,19 +816,19 @@ def test_symbolic_integration_alfa_eq(Constant, Variable, Sum, Product, Power):
     class TestSymbolicIntegrationAlfaEq(tst.TestCase):
 
         def test_variable_x_equivalent(self):
-            form = Function('f', Variable('x'))
+            form = ac_formula.Function('f', Variable('x'))
             np.testing.assert_equal(form.integrate('x').eval({'x': 12}), 72)
         def test_variable_y_equivalent(self):
-            form = Function('f', Variable('y'))
+            form = ac_formula.Function('f', Variable('y'))
             np.testing.assert_equal(form.integrate('x').eval({'x': 3, 'y': 4}), 12)
         def test_product_equivalent(self):
-            form = Function('f', Product(Variable('x'), Variable('y')))
+            form = ac_formula.Function('f', Product(Variable('x'), Variable('y')))
             np.testing.assert_equal(form.integrate('x').eval({'x': 8, 'y': 2}), 64)
         def test_sum_equivalent(self):
-            form = Function('f', Sum(Variable('x'), Variable('y')))
+            form = ac_formula.Function('f', Sum(Variable('x'), Variable('y')))
             np.testing.assert_equal(form.integrate('x').eval({'x': 1, 'y': 9}), 9.5)
         def test_power_equivalent(self):
-            form = Function('f', Power(Variable('x'), 3))
+            form = ac_formula.Function('f', Power(Variable('x'), 3))
             np.testing.assert_equal(form.integrate('x').eval({'x': 11}), 3660.25)
 
     run_tests(TestSymbolicIntegrationAlfaEq)
@@ -826,35 +837,35 @@ def test_symbolic_integration_bravo(Constant, Variable, Sum, Product, Power, Sin
     class TestSymbolicIntegrationBravo(tst.TestCase):
 
         def test_sin(self):
-            form = Function('f', Sin(Variable('x')))
-            integral = Function('f',Sum(Negative(Cos(Variable('x'))),Variable('C')),-1)
+            form = ac_formula.Function('f', Sin(Variable('x')))
+            integral = ac_formula.Function('f',Sum(ac_formula.Negative(Cos(Variable('x'))),Variable('C')),-1)
             np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_cos(self):
-            form = Function('f', Cos(Variable('x')))
-            integral = Function('f',Sum(Sin(Variable('x')),Variable('C')),-1)
+            form = ac_formula.Function('f', Cos(Variable('x')))
+            integral = ac_formula.Function('f',Sum(Sin(Variable('x')),Variable('C')),-1)
             np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_tan(self):
-            form = Function('f', Tan(Variable('x')))
-            integral = Function('f',Sum(Negative(Ln(Cos(Variable('x')))),Variable('C')),-1)
+            form = ac_formula.Function('f', Tan(Variable('x')))
+            integral = ac_formula.Function('f',Sum(ac_formula.Negative(Ln(Cos(Variable('x')))),Variable('C')),-1)
             np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_e(self):
-            form = Function('f', E(Variable('x')))
-            integral = Function('f',Sum(E(Variable('x')),Variable('C')),-1)
+            form = ac_formula.Function('f', E(Variable('x')))
+            integral = ac_formula.Function('f',Sum(E(Variable('x')),Variable('C')),-1)
             np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_exponent(self):
-            form = Function('f', Exponent(Constant(3), Variable('x')))
-            integral = Function('f',Sum(Product(Exponent(Constant(3),Variable('x')),
+            form = ac_formula.Function('f', Exponent(Constant(3), Variable('x')))
+            integral = ac_formula.Function('f',Sum(Product(Exponent(Constant(3),Variable('x')),
                                                 Power(Ln(Constant(3)),-1)),Variable('C')),-1)
             np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_ln(self):
-            form = Function('f', Ln(Variable('x')))
-            integral = Function('f',Sum(Product(Variable('x'),Sum(Ln(Variable('x')),
-                         Negative(Constant(1)))),Variable('C')),-1)
+            form = ac_formula.Function('f', Ln(Variable('x')))
+            integral = ac_formula.Function('f',Sum(Product(Variable('x'),Sum(Ln(Variable('x')),
+                         ac_formula.Negative(Constant(1)))),Variable('C')),-1)
             np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
         def test_log(self):
-            form = Function('f', Log(Constant(3),Variable('x')))
-            integral = Function('f',Sum(Product(Product(Variable('x'),Sum(Ln(Variable('x')),
-                         Negative(Constant(1)))),Power(Ln(Constant(3)),-1)),Variable('C')),-1)
+            form = ac_formula.Function('f', Log(Constant(3),Variable('x')))
+            integral = ac_formula.Function('f',Sum(Product(Product(Variable('x'),Sum(Ln(Variable('x')),
+                         ac_formula.Negative(Constant(1)))),Power(Ln(Constant(3)),-1)),Variable('C')),-1)
             np.testing.assert_equal(form.integrate('x'), integral, integrate_message(form, integral))
 
     run_tests(TestSymbolicIntegrationBravo)
@@ -863,25 +874,25 @@ def test_symbolic_integration_bravo(Constant, Variable, Sum, Product, Power, Sin
 def test_symbolic_integration_bravo_eq(Constant, Variable, Sum, Product, Power, Sin, Cos, Tan, E, Exponent, Ln, Log):
     class TestSymbolicIntegrationBravoEq(tst.TestCase):
         def test_sin_equivalent(self):
-            form = Function('f', Sin(Variable('x')))
+            form = ac_formula.Function('f', Sin(Variable('x')))
             np.testing.assert_almost_equal(form.integrate('x').eval({'x': -1}), -0.54,3)
         def test_cos_equivalent(self):
-            form = Function('f', Cos(Variable('x')))
+            form = ac_formula.Function('f', Cos(Variable('x')))
             np.testing.assert_almost_equal(form.integrate('x').eval({'x': 7}), 0.657,3)
         def test_tan_equivalent(self):
-            form = Function('f', Tan(Variable('x')))
+            form = ac_formula.Function('f', Tan(Variable('x')))
             np.testing.assert_almost_equal(form.integrate('x').eval({'x': 13}), 0.097,3)
         def test_e_equivalent(self):
-            form = Function('f', E(Variable('x')))
+            form = ac_formula.Function('f', E(Variable('x')))
             np.testing.assert_almost_equal(form.integrate('x').eval({'x': 5}), 148.413,3)
         def test_exponent_equivalent(self):
-            form = Function('f', Exponent(Constant(3), Variable('x')))
+            form = ac_formula.Function('f', Exponent(Constant(3), Variable('x')))
             np.testing.assert_almost_equal(form.integrate('x').eval({'x': 7}), 1990.693,3)
         def test_ln_equivalent(self):
-            form = Function('f', Ln(Variable('x')))
+            form = ac_formula.Function('f', Ln(Variable('x')))
             np.testing.assert_almost_equal(form.integrate('x').eval({'x': 42}), 114.982,3)
         def test_log_equivalent(self):
-            form = Function('f', Log(Constant(3),Variable('x')))
+            form = ac_formula.Function('f', Log(Constant(3),Variable('x')))
             np.testing.assert_almost_equal(form.integrate('x').eval({'x': 72}), 214.744,3)
 
     run_tests(TestSymbolicIntegrationBravoEq)

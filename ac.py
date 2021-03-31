@@ -5,23 +5,12 @@
 __author__      = "Brian van der Bijl"
 __copyright__   = "Copyright 2020, Hogeschool Utrecht"
 
-import math
-import sys
-import typing
+from typing import Tuple, Dict, Union
 import numpy as np
-from IPython.display import display, Math, Markdown, YouTubeVideo, Code
-from typing import Callable, Tuple, Dict, Union, List
 import matplotlib.pyplot as plot
 
-from ac_tests import *
-from ac_random import *
-from ac_latex import *
-from ac_exceptions import *
-from ac_formula import Function, Variable, Negative, Cot, Sec, Csc
-import ac_formula
-import ac_opgaven
-
 Polynomial = Tuple[Dict[int, float], str, str, int]
+
 
 def polynomial(terms: Union[list, dict], label: str = 'f', var: str = 'x', primes: int = 0) -> Polynomial:
     if isinstance(terms, np.ndarray):
@@ -31,10 +20,9 @@ def polynomial(terms: Union[list, dict], label: str = 'f', var: str = 'x', prime
     return (terms, label, var, primes)
 
 
-def plot_data_lr(data, slope=None, intercept=None):
-    xs = [ x for x in data] 
-    ys = [ data[x] for x in xs ] 
-    plot.scatter(xs, ys)
+def plot_data_lr(x_data, slope=None, intercept=None):
+    y_data = [ x_data[x] for x in x_data ]
+    plot.scatter(x_data, y_data)
     plot.title("Number of people who died by becoming tangled in their bedsheets from per capita cheese consumption")
     plot.xlabel("cheese consumption")
     plot.ylabel("Deaths by bedsheet-tangling")

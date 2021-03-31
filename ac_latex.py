@@ -5,12 +5,13 @@
 __author__      = "Brian van der Bijl"
 __copyright__   = "Copyright 2020, Hogeschool Utrecht"
 
-from IPython.display import display, Math, Markdown
 import re
 from fractions import Fraction
+from IPython.display import display, Math, Markdown
 
-def show_num(x):
-    return re.compile(r"\.(?!\d)").sub("\1",x)
+def show_num(num):
+    return re.compile(r"\.(?!\d)").sub("\1", num)
+
 
 def latex_formula(form, details=True):
     latex = form.simplify().to_latex(outer=True)
@@ -19,10 +20,11 @@ def latex_formula(form, details=True):
         if details:
             display(Markdown("<details><pre>$" + latex + "$</pre></details>"))
 
-def latex_bmatrix(M, label=None, details=True): # Gebaseerd op https://stackoverflow.com/questions/17129290/numpy-2d-and-1d-array-to-latex-bmatrix
-    if len(M.shape) > 2:
+
+def latex_bmatrix(matrix, label=None, details=True): # Gebaseerd op https://stackoverflow.com/questions/17129290/numpy-2d-and-1d-array-to-latex-bmatrix
+    if len(matrix.shape) > 2:
         raise ValueError('bmatrix can at most display two dimensions')
-    lines = str(M).replace("[", "").replace("]", "").splitlines()
+    lines = str(matrix).replace("[", "").replace("]", "").splitlines()
     if label:
         result = [label + " = "]
     else:
@@ -34,10 +36,11 @@ def latex_bmatrix(M, label=None, details=True): # Gebaseerd op https://stackover
     if details:
         display(Markdown("<details><pre>$" + " ".join(result) + "$</pre></details>"))
 
-def latex_amatrix(M, labels=None, details=True):
-    if len(M.shape) > 2:
+
+def latex_amatrix(matrix, labels=None, details=True):
+    if len(matrix.shape) > 2:
         raise ValueError('array can at most display two dimensions')
-    lines = str(M).replace("[", "").replace("]", "").splitlines()
+    lines = str(matrix).replace("[", "").replace("]", "").splitlines()
     if labels and len(labels) == 2:
         result = [r"(\mathbf{" + labels[0] + r"} | \vec " + labels[1] + ") = "]
     else:
@@ -49,10 +52,11 @@ def latex_amatrix(M, labels=None, details=True):
     if details:
         display(Markdown("<details><pre>$" + " ".join(result) + "$</pre></details>"))
 
-def latex_msquare(sq, details=True):
-    if sq.shape != (3,3):
+
+def latex_msquare(matrix, details=True):
+    if matrix.shape != (3,3):
         raise ValueError('Geen magisch vierkant')
-    lines = str(sq).replace("[", "").replace("]", "").splitlines()
+    lines = str(matrix).replace("[", "").replace("]", "").splitlines()
     result = [r"\begin{array}{|c|c|c|}\hline"]
     result += ["  " + " & ".join(map(show_num, l.split())) + r"\\\hline" for l in lines]
     result +=  [r"\end{array}"]
@@ -60,21 +64,23 @@ def latex_msquare(sq, details=True):
     if details:
         display(Markdown("<details><pre>$" + " ".join(result) + "$</pre></details>"))
 
-def latex_ratio(x):
+
+def latex_ratio(rational):
     """Helper functie om breuken naar LaTeX te converteren; getallen worden alleen naar string
        geconverteerd."""
-    if isinstance(x, int):
-        return str(x)
-    elif isinstance(x, Fraction):
-        if x.numerator == x.denominator:
+    if isinstance(rational, int):
+        return str(rational)
+    elif isinstance(rational, Fraction):
+        if rational.numerator == rational.denominator:
             return "1"
-        elif x.numerator > 0:
-            return r"\frac{" + str(abs(x.numerator)) + "}{" + str(x.denominator) + "}"
+        elif rational.numerator > 0:
+            return r"\frac{" + str(abs(rational.numerator)) + "}{" + str(rational.denominator) + "}"
         else:
-            return r"-\frac{" + str(abs(x.numerator)) + "}{" + str(x.denominator) + "}"
+            return r"-\frac{" + str(abs(rational.numerator)) + "}{" + str(rational.denominator) + "}"
     else:
-        n, d = x.as_integer_ratio() # Nul buiten de breuk halen
-        return ("-" if n < 0 else "") + r"\frac{" + str(abs(n)) + "}{" + str(d) + "}"
+        numerator, denominator = rational.as_integer_ratio() # Nul buiten de breuk halen
+        return ("-" if numerator < 0 else "") + r"\frac{" + str(abs(numerator)) + "}{" + str(denominator) + "}"
+
 
 def latex_polynomial(poly, details=True):
     terms, label, var, primes = poly # Bind parameters uit tuple
@@ -87,9 +93,10 @@ def latex_polynomial(poly, details=True):
         elif exp == 0:
             return ""
         else:
-            return (var + r"^{" + latex_ratio(exp) + "}")
+            return var + r"^{" + latex_ratio(exp) + "}"
 
-    # Print f(x) met het juiste aantal primes 
+
+    # Print f(x) met het juiste aantal primes
     if primes < 1:
         result = label.upper() + "(" + var + ") = "
     elif primes == 0:
@@ -98,21 +105,21 @@ def latex_polynomial(poly, details=True):
         result = label + "^{" + r"\prime"*primes + "}" + "(" + var + ") = "
     first = True # Na de eerste moet er "+" tussen de termen komen
 
-    for k, v in reversed(sorted(terms.items())): # Voor iedere term, van groot (hoog exponent) naar klein
-        if v > 0 and not first: # Koppel met een plus, tenzij het de eerste term is
+    for key, val in reversed(sorted(terms.items())): # Voor iedere term, van groot (hoog exponent) naar klein
+        if val > 0 and not first: # Koppel met een plus, tenzij het de eerste term is
             result += "+"
-        elif v < 0: # Koppel met een min als de term negatief is, ook de eerste term
+        elif val < 0: # Koppel met een min als de term negatief is, ook de eerste term
             result += "-"
 
-        if v != 0: # Zet first op False na de eerste keer
+        if val != 0: # Zet first op False na de eerste keer
             first = False
 
-        if k == 0:
-            result += str(v)
-        elif abs(v) == 1: # Print x in plaats van 1x en -x in plaats van -1x
-            result += str(power(k))
-        elif v != 0: # Print iedere term die niet 0 of 1 is op de gebruikelijke manier, zonder min want die staat
-            result += latex_ratio(abs(v)) + str(power(k))  #   erboven al
+        if key == 0:
+            result += str(val)
+        elif abs(val) == 1: # Print x in plaats van 1x en -x in plaats van -1x
+            result += str(power(key))
+        elif val != 0: # Print iedere term die niet 0 of 1 is op de gebruikelijke manier, zonder min want die staat
+            result += latex_ratio(abs(val)) + str(power(key))  #   erboven al
 
     display(Math(result))
     if details:

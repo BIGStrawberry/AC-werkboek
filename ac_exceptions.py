@@ -5,14 +5,14 @@
 __author__      = "Brian van der Bijl"
 __copyright__   = "Copyright 2020, Hogeschool Utrecht"
 
+
 class DimensionError(Exception):
-    pass
+    """Een vector of matrix heeft niet de juiste dimensies voor de gevraagde operatie."""
+
 
 class NonInvertibleError(Exception):
-    pass
+    """Een matrix is niet inverteerbaar, omdat deze niet vierkant is of een determinant van 0 heeft."""
 
-class SyntaxError(Exception):
-    pass
 
 class VariableError(Exception):
-    pass
+    """Geen waarde voor de gevraagde variabele opgegeven."""
