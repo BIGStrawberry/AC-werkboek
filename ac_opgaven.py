@@ -6,7 +6,8 @@ __author__      = "Brian van der Bijl"
 __copyright__   = "Copyright 2020, Hogeschool Utrecht"
 
 from ac_random import RNG, random_tensor, DEGENERATE, NONDEGENERATE, DONT_CARE, random_sys_of_eq, \
-                           random_derivatives, random_integrals, random_integrals_extra, random_de
+                           random_derivatives, random_integrals, random_integrals_extra, random_de, \
+                           random_double_derivatives, random_implicit_diff
 
 
 def negatieven_en_sommen():
@@ -123,3 +124,11 @@ def integrals_billy():
 def dif_eq():
     RNG().set(11)
     random_de()
+
+def double_derivatives():
+    RNG().set(12)
+    random_double_derivatives()
+    
+def implicit_diff():
+    RNG().set(13)
+    random_implicit_diff()

@@ -33,7 +33,7 @@ class RNG:
         if not RNG.instance:
             try:
                 RNG.instance = RNG.InnerRNG(int(studentnr))
-                display(Markdown("<h3 style=\"color:#00cccc;\">Seed geïnitialiseerd.</h3>"))
+                display(Markdown("<h2 style=\"color:#00cccc;\">Seed geïnitialiseerd.</h2>"))
 
             except ValueError:
                 display(Markdown("<h2 style=\"color:red;\">Je bent vergeten je studentnummer in te vullen, doe dat op de eerste regel!</h2>"))
@@ -121,20 +121,22 @@ def random_derivatives():
     text = f"Gegeven $h(x) = \\text{{log}}_{a}({b-1}x-{c}x^{d})$, geef $h^\\prime(x)$"
     display(Markdown("**(c)** " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
-
+    
+def random_double_derivatives():
     a, b = np.random.randint(2, 7, 2)
     text = f"Gegeven $k(x) = \\frac{{{a}}}{{x^{b}}}$, geef $k^{{\\prime\\prime}}(x)$"
-    display(Markdown("**(d)** " + text))
+    display(Markdown("**(a)** " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
 
     a, b = np.random.randint(2, 7, 2)
     text = f"Gegeven $\\frac{{dy}}{{dx}} = x^{a} - {hide_one(b-1)}y$, geef $\\frac{{d^2y}}{{dx^2}}$"
-    display(Markdown("**(e)** " + text))
+    display(Markdown("**(b)** " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
 
+def random_implicit_diff():
     a, b, c, d = np.random.randint(2, 7, 4)
     text = f"Gegeven ${hide_one(a-1)}x^3y - {hide_one(b-1)}x^2 + {hide_one(c-1)}y^4 = {2*d}$, geef $\\frac{{dy}}{{dx}}$"
-    display(Markdown("**(f)** " + text))
+    display(Markdown("**(a)** " + text))
     display(Markdown("<details><pre>" + text + "</pre></details>"))
 
 

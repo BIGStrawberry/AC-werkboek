@@ -359,11 +359,12 @@ def derivatives():
     display(Markdown(f"""\\begin{{align}}h^\\prime(x)
      &= \\frac{{{b-1}-{hide_one(c*d)}x^{{{d-1}}}}}{{({b-1}x-{c}x^{d})\\ \\text{{ln}}({a})}} {simplification} \\end{{align}}"""))
 
-    display(Markdown("<hr>"))
-
+def double_derivatives():
+    # pylint: disable=C0103
+    RNG().set(12)
     a, b = np.random.randint(2, 7, 2)
     text = f"Gegeven $k(x) = \\frac{{{a}}}{{x^{b}}}$, geef $k^{{\\prime\\prime}}(x)$"
-    display(Markdown("**(d)** " + text + r"$\\\\[3mm]$"))
+    display(Markdown("**(a)** " + text + r"$\\\\[3mm]$"))
     display(Markdown(f"""\\begin{{align}}
     k(x)                    &= {a}x^{{{-b}}} \\\\[1mm]
     k^\\prime(x)            &= {a*-b}x^{{{-b-1}}} \\\\[1mm]
@@ -375,18 +376,19 @@ def derivatives():
 
     a, b = np.random.randint(2, 7, 2)
     text = f"Gegeven $\\frac{{dy}}{{dx}} = x^{a} - {hide_one(b-1)}y$, geef $\\frac{{d^2y}}{{dx^2}}$"
-    display(Markdown("**(e)** " + text + r"$\\\\[3mm]$"))
+    display(Markdown("**(b)** " + text + r"$\\\\[3mm]$"))
     display(Markdown(f"""\\begin{{align}}\\frac{{d^2y}}{{dx^2}}
       &= \\frac{{dy}}{{dx}}x^{a} - {hide_one(b-1)}\\frac{{dy}}{{dx}} y \\\\[1mm]
       &= {a}x^{hide_one(a-1, True)} - {hide_one(b-1)} (x^{a} - {hide_one(b-1)}y) \\\\[1mm]
       &= {a}x^{hide_one(a-1, True)} - {hide_one(b-1)}x^{a} + {hide_one((b-1)**2)}y
       \\end{{align}}"""))
 
-    display(Markdown("<hr>"))
-
+def implicit_diff():
+    # pylint: disable=C0103
+    RNG().set(13)
     a, b, c, d = np.random.randint(2, 7, 4)
     text = f"Gegeven ${hide_one(a-1)}x^3y - {hide_one(b-1)}x^2 + {hide_one(c-1)}y^4 = {2*d}$, geef $\\frac{{dy}}{{dx}}$"
-    display(Markdown("**(f)** " + text + r"$\\\\[3mm]$"))
+    display(Markdown("**(a)** " + text + r"$\\\\[3mm]$"))
     display(Markdown(f"""\\begin{{align}}
     \\frac{{dy}}{{dx}}({hide_one(a-1)}x^3y - {hide_one(b-1)}x^2 + {hide_one(c-1)}y^4) &= \\frac{{dy}}{{dx}} {2*d} \\\\[2mm]
     {hide_one(a-1)}\\frac{{dy}}{{dx}}x^3y - {hide_one(b-1)} \\frac{{dy}}{{dx}} x^2 + {hide_one(c-1)}\\frac{{dy}}{{dx}}y^4 &= 0 \\\\[2mm]
