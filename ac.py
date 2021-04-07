@@ -20,8 +20,9 @@ def polynomial(terms: Union[list, dict], label: str = 'f', var: str = 'x', prime
     return (terms, label, var, primes)
 
 
-def plot_data_lr(x_data, slope=None, intercept=None):
-    y_data = [ x_data[x] for x in x_data ]
+def plot_data_lr(data, slope=None, intercept=None):
+    x_data = data.keys()
+    y_data = [ data[x] for x in x_data ]
     plot.scatter(x_data, y_data)
     plot.title("Number of people who died by becoming tangled in their bedsheets from per capita cheese consumption")
     plot.xlabel("cheese consumption")

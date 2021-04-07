@@ -525,7 +525,7 @@ def test_polynomial_derivative(get_derivative):
 | `test_primes` | Checkt of de variabele `primes` opgehoogd is |"""))
     run_tests(TestNumericDerivative)
 
-def test_matrix_derivative(deriv_matrix, matrix_product):
+def test_matrix_derivative(deriv_matrix):
     f_x = np.array((2,1,3))
     class TestMatrixDerivative(tst.TestCase):
 
