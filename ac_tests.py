@@ -490,16 +490,16 @@ def test_verkeer_snelheden(get_data, bereken_deltas):
 
         def test_min_1(self):
             car1_speed = bereken_deltas(self.time, self.car1)
-            np.testing.assert_almost_equal(min(car1_speed), 1.27)
+            np.testing.assert_almost_equal(min(car1_speed), -2.5)
         def test_max_1(self):
             car1_speed = bereken_deltas(self.time, self.car1)
-            np.testing.assert_almost_equal(max(car1_speed), 6.35)
+            np.testing.assert_almost_equal(max(car1_speed), 37.4)
         def test_min_2(self):
             car2_speed = bereken_deltas(self.time, self.car2)
             np.testing.assert_almost_equal(min(car2_speed), 0)
         def test_max_2(self):
             car2_speed = bereken_deltas(self.time, self.car2)
-            np.testing.assert_almost_equal(max(car2_speed), 2)
+            np.testing.assert_almost_equal(max(car2_speed), 30.7)
     run_tests(TestVerkeerSnelheden)
 
 def test_polynomial_derivative(get_derivative):
@@ -722,15 +722,15 @@ def test_verkeer_posities(get_data, bereken_posities, vind_botsing):
         (t,ca,cap,cb,cbp) = vind_botsing(time,car1_position,car2_position,car3_position)
 
         def test_time(self):
-            np.testing.assert_almost_equal(self.t, 0.3, 1)
+            np.testing.assert_equal(self.t, 28.2)
         def test_car_a(self):
-            np.testing.assert_equal(self.ca, 1)
+            np.testing.assert_equal(self.ca, 2)
         def test_car_b(self):
             np.testing.assert_equal(self.cb, 3)
         def test_car_a_pos(self):
-            np.testing.assert_almost_equal(self.cap, 1.5, 1)
+            np.testing.assert_almost_equal(self.cap, 657.4, 1)
         def test_car_b_pos(self):
-            np.testing.assert_almost_equal(self.cbp, -0.3, 1)
+            np.testing.assert_almost_equal(self.cbp, 658.5, 1)
     run_tests(TestVerkeerPosities)
 
 
